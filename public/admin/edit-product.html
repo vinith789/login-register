@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/edit-production.css">
+  <title>Edit Product</title>
+
+</head>
+<body>
+  <nav>
+  <h2>Admin Panel</h2>
+  <ul>
+    <li><a href="/admin/add-product">Add Product</a></li>
+    <li><a href="/admin/view-product">List Products</a></li>
+    <li><a href="/admin/order-product">Order Product</a></li>
+    <li><a href="/admin/update-order">Update Order</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+</nav>
+
+  <h2>Edit Product</h2>
+  <form id="editForm" enctype="multipart/form-data" method="POST">
+    <input type="hidden" name="productId" id="productId">
+    <label>Name</label>
+    <input type="text" name="name" id="name" required>
+
+    <label>Price</label>
+    <input type="number" name="price" id="price" required>
+
+    <label>Discount</label>
+    <input type="number" name="discount" id="discount">
+
+    <label>Description</label>
+    <textarea name="description" id="description" rows="4"></textarea>
+
+    <label>Current Image</label><br>
+    <img id="currentImage" src="" alt="Product Image"><br>
+
+    <label>Upload New Image (optional)</label>
+    <input type="file" name="image" id="image"  accept="image/*" onchange="previewImage(event)">
+    <img id="preview" src="" alt="Preview" style="display: none;" />
+
+    <br>
+    <button type="submit">Update Product</button>
+  </form>
+
+ <script>
+  function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const preview = document.getElementById("preview");
+      preview.src = reader.result;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const form = document.getElementById('editForm');
+  const productId = urlParams.get('id');
+
+  fetch(`/api/products/${productId}`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('productId').value = data._id;
+      document.getElementById('name').value = data.name;
+      document.getElementById('price').value = data.price;
+      document.getElementById('discount').value = data.discount;
+      document.getElementById('description').value = data.description;
+      document.getElementById('currentImage').src = data.image;
+
+      // ✅ set form action here AFTER data is available
+      form.action = `/admin/edit-product/${data._id}`;
+    })
+    .catch(err => {
+      console.error("Error fetching product:", err);
+      alert("Failed to load product details.");
+    });
+</script>
+
+</body>
+</html>

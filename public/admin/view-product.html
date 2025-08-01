@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="./css/style.css">
+  <title>Product List</title>
+</head>
+<body>
+
+<nav>
+  <h2>Admin Panel</h2>
+  <ul>
+    <li><a href="/admin/add-product">Add Product</a></li>
+    <li><a href="/admin/view-product">List Products</a></li>
+    <li><a href="/admin/order-product">Order Product</a></li>
+    <li><a href="/admin/update-order">Update Order</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+</nav>
+
+  <h2>All Products</h2>
+  <div id="product-list"></div>
+
+  <script>
+    // Fetch product data from backend API
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(products => {
+        const container = document.getElementById('product-list');
+        if (products.length === 0) {
+          container.innerHTML = "<p>No products available</p>";
+          return;
+        }
+
+        container.innerHTML = products.map(p => `
+        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+          <img src="${p.image}" width="100" />
+          <h3>${p.name}</h3>
+          <p>Price: ₹${p.price}</p>
+          <p>Discount: ${p.discount}%</p>
+          <p>${p.description}</p>
+          <a href="/admin/edit-product.html?id=${p._id}">Edit</a> |
+          <a href="/admin/delete-product/${p._id}" onclick="return confirm('Are you sure?')">Delete</a>
+
+        </div>
+      `).join('');
+
+      });
+  </script>
+</body>
+</html>
