@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Home</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="welcome-container">
+    <h2>Welcome, <span id="userName"></span>!</h2>
+    <p>Email: <span id="userEmail"></span></p>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <script>
+    fetch("/get-user")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("userName").textContent = data.name;
+        document.getElementById("userEmail").textContent = data.email;
+      })
+      .catch(() => {
+        window.location.href = "/login";
+      });
+  </script>
+</body>
+</html>
