@@ -3,8 +3,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const Product = require("../models/Product");
-const Catalogue = require("../models/Catalogue");
+const Product = require("/models/Product");
+const Catalogue = require("/models/Catalogue");
 
 const router = express.Router();
 
