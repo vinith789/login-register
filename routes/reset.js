@@ -34,8 +34,20 @@ router.post("/forgot-password", (req, res) => {
   transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "Reset Password OTP",
-    text: `Your OTP to reset password is: ${otp}`
+    subject: "🔐 Password Reset Request – Allwin Baby Shop",
+    text: `
+    We heard you need a little help getting back into your Allwin Baby Shop account. Don’t worry  we’ve got you! 💕
+
+    Here’s your One-Time Password (OTP) to reset your password:
+    Your OTP to reset password is: ✨ ${otp} ✨
+
+    ⚠️ This code will expire in 10 minutes for your security.
+    If you didn’t request a password reset, please ignore this email  your account is safe.
+
+    If you have any questions or need assistance, feel free to reach out to our support team.
+    With care,
+    Allwin Baby Shop Support Team 🍼💖
+    `
   }, (err) => {
     if (err) {
       console.log("Reset OTP email error:", err);

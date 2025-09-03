@@ -1,12 +1,14 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const Product = require("../models/Product");
 const fs = require("fs");
+
+const Product = require("../models/Product");
+const Catalogue = require("../models/Catalogue");
 
 const router = express.Router();
 
-// Storage config for multer
+// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "../public/uploads"));
@@ -15,18 +17,27 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
-
 const upload = multer({ storage });
 
+/* ------------------------------------------------
+   PRODUCT ROUTES
+------------------------------------------------ */
+
+// Add Product Page
 router.get("/admin/add-product", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/admin/add-product.html"));
 });
 
+// Serve addcatalogues.html
+router.get("/admin/add-catalogues", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/admin/addcatalogue.html"));
+});
 
-// Route to handle form submission
-router.post("/add-product", upload.single("image"), async (req, res) => {
+// Add Product
+router.post("/admin/add-product", upload.single("image"), async (req, res) => {
   try {
     const { name, price, discount, description } = req.body;
+    const catalogues = req.body["catalogues[]"] || req.body.catalogues; // fallback
     const image = req.file ? `/uploads/${req.file.filename}` : "";
 
     const newProduct = new Product({
@@ -35,11 +46,11 @@ router.post("/add-product", upload.single("image"), async (req, res) => {
       price,
       discount,
       description,
+      catalogues, // ✅ array of "Catalogue - Model"
     });
 
     await newProduct.save();
 
-    // Send HTML response with alert and redirect
     res.send(`
       <script>
         alert("Product added successfully!");
@@ -52,6 +63,8 @@ router.post("/add-product", upload.single("image"), async (req, res) => {
   }
 });
 
+
+// Get all products (JSON)
 router.get("/api/products", async (req, res) => {
   try {
     const products = await Product.find();
@@ -61,16 +74,15 @@ router.get("/api/products", async (req, res) => {
   }
 });
 
+// View Product Page
 router.get("/admin/view-product", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/admin/view-product.html"));
 });
 
-
-// GET: Edit page
-router.get("/edit-product/:id", async (req, res) => {
-  const productId = req.params.id;
+// Edit Product Page
+router.get("/admin/edit-product/:id", async (req, res) => {
   try {
-    const product = await Product.findById(productId);
+    const product = await Product.findById(req.params.id);
     res.render("edit-product", { product });
   } catch (err) {
     console.error(err);
@@ -78,31 +90,25 @@ router.get("/edit-product/:id", async (req, res) => {
   }
 });
 
-
-// POST: Update product
+// Update Product
 router.post("/admin/edit-product/:id", upload.single("image"), async (req, res) => {
   try {
-    const { name, price, discount, description } = req.body;
+    const { name, price, discount, description, catalogues } = req.body;
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).send("Product not found");
 
     let imagePath = product.image;
-
-    // If a new image is uploaded
     if (req.file) {
       imagePath = `/uploads/${req.file.filename}`;
-      // Delete old image
       const oldImagePath = path.join(__dirname, "../public", product.image);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
+      if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
     }
 
-    // Update fields
     product.name = name;
     product.price = price;
     product.discount = discount;
     product.description = description;
+    product.catalogues = catalogues;
     product.image = imagePath;
 
     await product.save();
@@ -119,7 +125,7 @@ router.post("/admin/edit-product/:id", upload.single("image"), async (req, res) 
   }
 });
 
-// GET: Get single product for edit page
+// Get single product JSON
 router.get("/api/products/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -131,20 +137,15 @@ router.get("/api/products/:id", async (req, res) => {
   }
 });
 
-
-// detele product
+// Delete product
 router.get("/admin/delete-product/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).send("Product not found");
 
-    // Delete image
     const imagePath = path.join(__dirname, "../public", product.image);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
+    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
 
-    // Delete product
     await Product.deleteOne({ _id: req.params.id });
 
     res.send(`
@@ -158,6 +159,50 @@ router.get("/admin/delete-product/:id", async (req, res) => {
   }
 });
 
+// API: Get existing catalogues for dropdown
+router.get("/api/catalogues", async (req, res) => {
+  try {
+    const catalogues = await Catalogue.find();
+    res.json(catalogues);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch catalogues" });
+  }
+});
+
+// API: Add new catalogue or add model to existing one
+router.post("/admin/add-catalogues", async (req, res) => {
+  const { existingCatalogue, newCatalogue, modelName } = req.body;
+
+  try {
+    let catalogueName = newCatalogue && newCatalogue.trim() !== ""
+                        ? newCatalogue
+                        : existingCatalogue;
+
+    if (!catalogueName) {
+      return res.status(400).send("Please select or enter a catalogue name");
+    }
+
+    let catalogue = await Catalogue.findOne({ name: catalogueName });
+
+    if (!catalogue) {
+      // create new catalogue
+      catalogue = new Catalogue({ name: catalogueName, models: [modelName] });
+    } else {
+      // add new model to existing catalogue
+      if (!catalogue.models.includes(modelName)) {
+        catalogue.models.push(modelName);
+      }
+    }
+
+  await catalogue.save();
+  res.redirect("/admin/add-catalogues?success=1");
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error saving catalogue");
+  }
+});
 
 
 module.exports = router;

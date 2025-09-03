@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ALLWIN PRODUCT</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="./css/shop.css">
+<link rel="stylesheet" href="./css/home.css">
+<link rel="stylesheet" href="./css/mall.css">
+<link rel="stylesheet" href="./css/footer.css">
+</head>
+<body>
+
+<!-- Top Navbar -->
+  <div class="top-nav">
+    <button><i class="fas fa-receipt"></i> Order</button>
+    <button id="cartBtn">
+      <i class="fas fa-shopping-cart"></i> Cart
+      <span id="cartCount" class="cart-count"></span>
+    </button>
+  </div>
+
+<!-- Main Navbar -->
+<div class="main-nav">
+  <div class="logo-section">
+    <img src="./image/logo.jpg" alt="Logo">
+    <div class="shop-text">
+      <h5>Allwin Baby Shop</h5>
+      <small>Happy Toys Happy Kids</small>
+    </div>
+  </div>
+
+  <!-- Hamburger / Close Icon -->
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/user/home">Home</a>
+    <a href="/user/about">About</a>
+    <a href="/user/shop">Shop</a>
+    <a href="/user/mall">Fun Mall</a>
+    <a href="/user/contact">Contact</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<!-- Hero -->
+  <section class="hero">
+    <h1>Welcome to Fun Mall 🎉</h1>
+    <p>Where kids' happiness meets endless fun!</p>
+  </section>
+
+<!-- About Section -->
+<section class="about-section">
+  <h2>About <span>Fun Mall</span></h2>
+  <div class="about">
+    <img src="./image/shop/image-10.jpg" alt="Fun Mall">
+    <div class="about-text">
+       Welcome to <strong>Fun Mall</strong>, the ultimate destination for families and children!
+      A vibrant world filled with joy, laughter, shopping, dining, and endless entertainment.
+      From kids’ play zones to exciting food courts and thrilling rides, Fun Mall is designed
+      to bring smiles to every face.
+      Whether you’re here for fashion, fun, or flavors, our mall offers an unforgettable
+      experience for all age groups.
+      Discover a lively environment where shopping meets celebration and every visit becomes
+      a memory worth cherishing.
+      Fun Mall isn’t just a place—it’s a lifestyle hub where excitement never ends!
+    </div>
+  </div>
+</section>
+
+
+  <!-- Gallery -->
+  <section>
+    <h2>Gallery</h2>
+    <div class="gallery">
+      <img src="./image/shop/image-8.jpg" alt="gallery">
+      <img src="./image/shop/image-7.jpg" alt="gallery">
+      <img src="./image/shop/image-9.jpg" alt="gallery">
+      <img src="./image/shop/image-6.jpg" alt="gallery">
+    </div>
+  </section>
+
+  <!-- Inside Fun Mall -->
+  <section>
+    <h2>What’s Inside Fun Mall?</h2>
+    <div class="inside">
+      <div class="card">
+        <img src="./image/shop/image-10.jpg" alt="">
+        <h3>Kids Play Area</h3>
+        <p>Colorful play zones, rides, and fun-filled activities for kids.</p>
+      </div>
+      <div class="card">
+        <img src="./image/shop/image-10.jpg" alt="">
+        <h3>Food Court</h3>
+        <p>A variety of cuisines to enjoy with your friends and family.</p>
+      </div>
+      <div class="card">
+        <img src="./image/shop/image-10.jpg" alt="">
+        <h3>Shopping</h3>
+        <p>Exclusive shops with fashion, lifestyle, and toys for everyone.</p>
+      </div>
+      <div class="card">
+        <img src="./image/shop/image-10.jpg" alt="">
+        <h3>Events & Shows</h3>
+        <p>Exciting cultural events and live entertainment every weekend.</p>
+      </div>
+      <div class="card">
+        <img src="./image/shop/image-10.jpg" alt="">
+        <h3>Kids Play Area</h3>
+        <p>Colorful play zones, rides, and fun-filled activities for kids.</p>
+      </div>
+      <div class="card">
+        <img src="./image/shop/image-10.jpg" alt="">
+        <h3>Food Court</h3>
+        <p>A variety of cuisines to enjoy with your friends and family.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charges -->
+  <section class="charges">
+    <h2>Charges & Timings</h2>
+    <p>🎟 Entry Fee: ₹100 per person</p>
+    <p>🕒 Open: 10:00 AM - 10:00 PM</p>
+    <p>📅 All Days (Including Weekends & Holidays)</p>
+  </section>
+
+  <!-- Contact -->
+  <section>
+  <h2>Contact Us</h2>
+  <div class="contact">
+    📍 Location: Main City Center, Near Park Avenue <br>
+    ☎ Call Us: <strong>+91 98765 43210</strong> <br>
+    📧 Email: <strong>info@funmall.com</strong> <br>
+    💬 Our Fun Mall support team is always ready to connect with you and provide quick assistance.
+    🤝 Whether it’s shopping queries, event details, or general information – we’re just a call or message away!
+  </div>
+</section>
+<!-- footer content -->
+<footer class="footer">
+    <div class="footer-container">
+
+      <!-- Logo & About -->
+      <div class="footer-logo">
+        <img src="./logo" alt="">
+        <h2>Allwin Baby Shop</h2>
+        <span>Happy Toys, Happy Kids</span>
+        <p>Your trusted partner for quality toys that spark imagination and create joyful memories for children of all ages.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Shipping Info</a></li>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="footer-categories">
+        <h3>Categories</h3>
+        <ul>
+          <li><a href="#">Soft Toys</a></li>
+          <li><a href="#">Educational Toys</a></li>
+          <li><a href="#">Action Figures</a></li>
+          <li><a href="#">Outdoor Toys</a></li>
+          <li><a href="#">Dolls</a></li>
+          <li><a href="#">Musical Toys</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-contact">
+        <h3>Contact Us</h3>
+        <p><i class="fas fa-map-marker-alt"></i>123 Toy Street, Kids Corner, Mumbai, Maharashtra 400001</p>
+        <p><i class="fas fa-phone"></i>+91 98765 43210</p>
+        <p><i class="fas fa-envelope"></i>hello@allwinbaby.com</p>
+
+        <div class="store-hours">
+          <strong>Store Hours</strong><br>
+          Mon - Sat: 10:00 AM - 8:00 PM<br>
+          Sunday: 11:00 AM - 6:00 PM
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      © 2024 Allwin Baby Shop. All rights reserved. Made with <span>❤</span> for kids.
+    </div>
+  </footer>
+
+
+
+</body>
+</html>
