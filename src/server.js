@@ -25,12 +25,12 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.log("MongoDB error:", err));
 
 // Routes
-const authRoutes = require("./src/routes/auth");
-const resetRoutes = require("./src/routes/reset");
-const adminRoutes = require("./src/routes/admin");
-const searchLogger = require("./src/routes/search");
-const cartRoutes = require("./src/routes/cart");
-const orderRoutes = require("./src/routes/order");
+const authRoutes = require("./routes/auth");
+const resetRoutes = require("./routes/reset");
+const adminRoutes = require("./routes/admin");
+const searchLogger = require("./routes/search");
+const cartRoutes = require("./routes/cart");
+const orderRoutes = require("./routes/order");
 
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
