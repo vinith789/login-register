@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../models/Order");
+const Order = require("../../models/Order");
 
 // POST /api/orders
 router.post("/", async (req, res) => {
