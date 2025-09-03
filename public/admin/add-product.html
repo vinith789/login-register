@@ -4,15 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Add Product</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/navbar.css">
   <link rel="stylesheet" href="./css/add-product.css">
 </head>
 <body>
 
-  <nav>
-  <h2>Admin Panel</h2>
-  <ul>
+<nav class="navbar">
+  <h2 class="logo">Admin Panel</h2>
+  <label for="menu-checkbox" class="menu-toggle">&#9776;</label>
+  <ul class="nav-links">
     <li><a href="/admin/add-product">Add Product</a></li>
+    <li><a href="/admin/add-catalogues">Add-Catalogues</a></li>
     <li><a href="/admin/view-product">List Products</a></li>
     <li><a href="/admin/order-product">Order Product</a></li>
     <li><a href="/admin/update-order">Update Order</a></li>
@@ -20,22 +22,58 @@
   </ul>
 </nav>
 
-  <form action="/add-product" method="POST" enctype="multipart/form-data">
-    <h2>Add New Product</h2>
+<!-- Product Form -->
+<div class="container">
+  <h2>Add Product</h2>
+  <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
 
-    <label>Upload Image</label>
-    <input type="file" name="image" accept="image/*" onchange="previewImage(event)" required />
-    <img id="preview" src="" alt="Preview" style="display: none;" />
+    <!-- Product Image -->
+    <div>
+      <label>Product Image</label>
+      <input type="file" name="image" accept="image/*" onchange="previewImage(event)" required>
+      <img id="preview" src="" alt="Image Preview" style="display:none; max-width: 200px; margin-top: 10px;">
+    </div>
 
-    <input type="text" name="name" placeholder="Product Name" required />
-    <input type="number" name="price" placeholder="Price" required />
-    <input type="number" name="discount" placeholder="Discount (%)" required />
-    <textarea name="description" placeholder="Description" required></textarea>
+    <!-- Product Name -->
+    <div>
+      <label>Product Name</label>
+      <input type="text" name="name"  required>
+    </div>
 
-    <button type="submit">Add Product</button>
+    <!-- Price -->
+    <div>
+      <label>Price</label>
+      <input type="number" name="price" required>
+    </div>
+
+    <!-- Discount -->
+    <div>
+      <label>Discount</label>
+      <input type="number" name="discount" placeholder="Discount (%)" required />
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label>Description</label>
+      <textarea name="description" ></textarea>
+    </div>
+
+    <!-- 🔥 Number of models -->
+    <div>
+      <label>How many models?</label>
+      <input type="number" id="modelCount" min="1" value="1">
+      <button type="button" class="btn btn-secondary mt-2" onclick="generateModelSelectors()">Generate</button>
+    </div>
+
+    <!-- 🔥 Dynamic model selectors -->
+    <div id="modelSelectors"></div>
+
+    <button type="submit" >Save Product</button>
   </form>
+</div>
 
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
   function previewImage(event) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -45,6 +83,57 @@
     };
     reader.readAsDataURL(event.target.files[0]);
   }
+
+  let cataloguesData = [];
+
+  // Fetch catalogues + models
+  async function fetchCatalogues() {
+    const res = await fetch("/api/catalogues");
+    cataloguesData = await res.json();
+  }
+
+  // Generate dropdowns
+  async function generateModelSelectors() {
+    if (cataloguesData.length === 0) await fetchCatalogues();
+
+    const count = document.getElementById("modelCount").value;
+    const container = document.getElementById("modelSelectors");
+    container.innerHTML = ""; // clear old
+
+    for (let i = 0; i < count; i++) {
+      let select = document.createElement("select");
+      select.name = "catalogues[]"; // important: array field
+      select.className = "form-select mb-2";
+      select.required = true;
+
+      // Build options: catalogue - model
+      cataloguesData.forEach(catalogue => {
+        catalogue.models.forEach(model => {
+          let option = document.createElement("option");
+          option.value = `${catalogue.name} - ${model}`;
+          option.textContent = `${catalogue.name} → ${model}`;
+          select.appendChild(option);
+        });
+      });
+
+      container.appendChild(select);
+    }
+  }
+
+  // Load catalogues immediately
+  fetchCatalogues();
 </script>
+
+<script>
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navLinks = document.querySelector(".nav-links");
+
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+</script>
+
+
+
 </body>
 </html>

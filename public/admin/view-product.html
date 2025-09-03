@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="./css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./css/navbar.css">
+  <link rel="stylesheet" href="./css/viewproduct.css">
   <title>Product List</title>
 </head>
 <body>
 
-<nav>
-  <h2>Admin Panel</h2>
-  <ul>
+<nav class="navbar">
+  <h2 class="logo">Admin Panel</h2>
+  <label for="menu-checkbox" class="menu-toggle">&#9776;</label>
+  <ul class="nav-links">
     <li><a href="/admin/add-product">Add Product</a></li>
+    <li><a href="/admin/add-catalogues">Add-Catalogues</a></li>
     <li><a href="/admin/view-product">List Products</a></li>
     <li><a href="/admin/order-product">Order Product</a></li>
     <li><a href="/admin/update-order">Update Order</a></li>
@@ -17,34 +22,71 @@
   </ul>
 </nav>
 
-  <h2>All Products</h2>
-  <div id="product-list"></div>
+<h2>All Products</h2>
+  <div class="content-section"></div>
 
-  <script>
-    // Fetch product data from backend API
-    fetch('/api/products')
-      .then(res => res.json())
-      .then(products => {
-        const container = document.getElementById('product-list');
-        if (products.length === 0) {
-          container.innerHTML = "<p>No products available</p>";
-          return;
-        }
 
-        container.innerHTML = products.map(p => `
-        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
-          <img src="${p.image}" width="100" />
-          <h3>${p.name}</h3>
-          <p>Price: ₹${p.price}</p>
-          <p>Discount: ${p.discount}%</p>
-          <p>${p.description}</p>
-          <a href="/admin/edit-product.html?id=${p._id}">Edit</a> |
-          <a href="/admin/delete-product/${p._id}" onclick="return confirm('Are you sure?')">Delete</a>
+<script>
+  // Fetch product data from backend API
+  fetch('/api/products')
+    .then(res => res.json())
+    .then(products => {
+      const container = document.querySelector('.content-section');
+      if (!products || products.length === 0) {
+        container.innerHTML = "<p>No products available</p>";
+        return;
+      }
 
+      // Build Bootstrap cards
+      container.innerHTML = `
+        <div class="product-grid">
+          ${products.map(p => `
+            <div class="product-card">
+                <img src="${p.image}" alt="${p.name}" style="height:180px; object-fit:cover;">
+                  <h5>${p.name || "Unnamed Product"}</h5>
+                  <p class="product-price"><strong>Price:</strong> ₹${p.price || 0}</p>
+                  <p class="product-price"><strong>Discount:</strong> ${p.discount || 0}%</p>
+                  <p><strong>description: </strong>${p.description || ""}</p>
+                  <h4>Catalogues:</h4>
+                  <div>
+                    ${(() => {
+                      const grouped = {};
+                      (p.catalogues || []).forEach(c => {
+                        const parts = c.split(" - ");
+                        const heading = parts[0] || "Category";
+                        const value = parts[1] || "";
+                        if (!grouped[heading]) grouped[heading] = [];
+                        grouped[heading].push(value);
+                      });
+                      return Object.keys(grouped).map(heading => `
+                        <div><strong>${heading}:</strong> ${grouped[heading].join(", ")}</div>
+                      `).join("");
+                    })()}
+                  </div>
+                <div class="card-actions">
+                  <a class="btn" href="/admin/edit-product.html?id=${p._id}">Edit</a>
+                  <a class="btn" href="/admin/delete-product/${p._id}" onclick="return confirm('Are you sure?')">Delete</a>
+                </div>
+              </div>
+          `).join("")}
         </div>
-      `).join('');
+      `;
+    })
+    .catch(err => {
+      console.error("Error fetching products:", err);
+      document.getElementById('product-list').innerHTML = "<p>Error loading products</p>";
+    });
+</script>
 
-      });
-  </script>
+
+<script>
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navLinks = document.querySelector(".nav-links");
+
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+</script>
+
 </body>
 </html>

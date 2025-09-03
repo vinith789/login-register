@@ -7,6 +7,7 @@ const productSchema = new mongoose.Schema({
   description: String,
   about: String,
   image: String, // Image path
+  catalogues: [String] ,
   createdAt: {
     type: Date,
     default: Date.now

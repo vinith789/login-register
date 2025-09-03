@@ -49,8 +49,23 @@ router.post("/send-otp", async (req, res) => {
   transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "Your OTP Code",
-    text: `Your OTP is: ${otp}`
+    subject: "Your Allwin Baby Shop OTP is Here!",
+    text: `
+    Hello [${name}] 🎉🎉
+    Welcome to Allwin Baby Shop! 🍼💖
+    We’re thrilled to have you join our community of parents and caregivers.
+    We’re so excited to have you join the Allwin Baby Shop family! 💖
+
+    Here’s your One-Time Password (OTP) to complete your registration:
+    Your OTP is: 🎯 ${otp}  🎯
+
+    🔒 Please enter this code within 10 minutes to keep your account safe.
+    If you didn’t request this, you can safely ignore this email.
+
+    If you have any questions or need assistance, feel free to reach out to us at
+    With love,
+    Allwin Baby Shop Team 🍼💝
+      `
   }, (err) => {
     if (err) {
       console.log("Email send error:", err);
@@ -81,7 +96,6 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 // Login
-// Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -90,16 +104,16 @@ router.post("/login", async (req, res) => {
     return res.send("<script>alert('Invalid credentials.'); window.location.href='/login';</script>");
   }
 
-  req.session.user = { name: user.name, email: user.email };
+  // Store id also
+  req.session.user = { id: user._id, name: user.name, email: user.email };
 
-  // Admin redirect condition
   if (user.name === "admin" && user.email === "admin123@gmail.com") {
     return res.redirect("/admin/home");
   }
 
-  // Regular user redirect
   res.redirect("/user/home");
 });
+
 // Admin Home page after login
 router.get("/admin/home", (req, res) => {
   if (!req.session.user || req.session.user.email !== "admin123@gmail.com") {
@@ -114,14 +128,69 @@ router.get("/user/home", (req, res) => {
   if (!req.session.user) {
     return res.redirect("/login");
   }
-  res.sendFile(path.join(__dirname, "../public/user/home.html"));
+  res.sendFile(path.join(__dirname, "../public/user/html/home.html"));
+});
+
+//About page
+
+router.get("/user/about", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/user/html/about.html"));
+});
+
+
+// Shop page
+router.get("/user/shop", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/user/html/shop.html"));
+});
+
+// order page
+router.get("/user/order", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/user/html/checkout.html"));
+});
+
+// order page
+router.get("/user/address", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/user/html/address.html"));
+});
+
+// Fun Mall page
+router.get("/user/mall", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/user/html/mall.html"));
+});
+
+// Contact page
+router.get("/user/contact", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/user/html/contact.html"));
+});
+
+// Cart page route
+router.get("/user/cart", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/user/html/cart.html"));
 });
 
 router.get("/get-user", (req, res) => {
   if (!req.session.user) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  res.json(req.session.user);
+  res.json(req.session.user); // includes id, name, email
 });
 
 

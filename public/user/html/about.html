@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Allwin Baby Shop HOME</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/home.css">
+<link rel="stylesheet" href="./css/about.css">
+<link rel="stylesheet" href="./css/footer.css">
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div class="top-nav">
+  <button><i class="fas fa-receipt"></i> Order</button>
+  <button><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+</div>
+
+<!-- Main Navbar -->
+<div class="main-nav">
+  <div class="logo-section">
+    <img src="./image/logo.jpg" alt="Logo">
+    <div class="shop-text">
+      <h5>Allwin Baby Shop</h5>
+      <small>Happy Toys Happy Kids</small>
+    </div>
+  </div>
+
+  <!-- Hamburger / Close Icon -->
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/user/home">Home</a>
+    <a href="/user/about">About</a>
+    <a href="/user/shop">Shop</a>
+    <a href="/user/mall">Fun Mall</a>
+    <a href="/user/contact">Contact</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<!--About Page -->
+
+<!-- Top Section -->
+  <section class="hero">
+    <h1>About Allwin Baby Shop</h1>
+    <p>Bringing joy to children worldwide with premium quality toys that spark imagination, creativity, and endless hours of fun and learning.</p>
+  </section>
+
+  <!-- Our Story -->
+  <section class="story">
+    <div class="story-left">
+      <h2>Our Story</h2>
+      <ul>
+        <li>Proprietor: SASIKUMAR</li>
+        <li>Shop Open in 2012</li>
+        <li>Establishment in Funmall in 2019</li>
+        <li>Branch Open in Mohanur in 2022</li>
+      </ul>
+      <p>Allwin Baby Shop has been a trusted name for parents since 2012. Our journey started with a vision to provide quality toys that not only entertain but also contribute to child development.</p>
+      <p>From a humble beginning to opening branches, we’ve always believed in care, love, and creativity as the heart of our brand ❤️.</p>
+    </div>
+    <div class="story-right">
+      <iframe src="https://www.youtube.com/embed/2m2Z8IzDt6s?si=Ft8T0nc6fq0d6fmN" title="YouTube video"></iframe>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="mission">
+    <h2>Our Mission & Values</h2>
+    <p>We believe in creating not just customers, but lasting memories and developmental milestones for children across the globe.</p>
+      <div class="card">
+        <div class="mission-card">
+          <img src="./image/shop/aboutpage/achievement.png" alt="">
+          <h3>Quality First</h3>
+          <p>Every toy meets international safety standards and undergoes rigorous quality testing before reaching your child.</p>
+        </div>
+        <div class="mission-card">
+          <img src="./image/shop/aboutpage/evolution.png" alt="">
+          <h3>Child Development</h3>
+          <p>We collaborate with child psychologists and educators to ensure our toys support healthy development and learning.</p>
+        </div>
+        <div class="mission-card">
+          <img src="./image/shop/aboutpage/happy-face.png" alt="">
+          <h3>Customer Happiness</h3>
+          <p>Your child’s smile is our success. We go above and beyond to ensure every purchase brings joy and satisfaction.</p>
+        </div>
+      </div>
+  </section>
+
+
+  <!-- Why Choose Us -->
+  <section class="mission">
+    <h2>Why Choose Allwin Baby Shop?</h2>
+    <p>We’re more than just a toy store – we’re your partners in creating beautiful childhood memories.</p>
+
+    <div class="values">
+      <div class="value-box">
+        <div class="icon-circle">🚚</div>
+        <h3>Fast & Free Shipping</h3>
+        <p>Free shipping on orders above ₹999 with lightning-fast delivery across India.</p>
+      </div>
+      <div class="value-box">
+        <div class="icon-circle">🛡️</div>
+        <h3>Safety Guaranteed</h3>
+        <p>All toys are tested for safety and made from non-toxic, child-safe materials.</p>
+      </div>
+      <div class="value-box">
+        <div class="icon-circle">🎁</div>
+        <h3>Beautiful Packaging</h3>
+        <p>Every order comes with complimentary gift wrapping perfect for any occasion.</p>
+      </div>
+      <div class="value-box">
+        <div class="icon-circle">⭐</div>
+        <h3>Premium Quality</h3>
+        <p>Curated selection of toys from trusted brands worldwide with quality assurance.</p>
+      </div>
+      <div class="value-box">
+        <div class="icon-circle">📞</div>
+        <h3>24/7 Support</h3>
+        <p>Friendly customer support team ready to help you with any questions or concerns.</p>
+      </div>
+      <div class="value-box">
+        <div class="icon-circle">↩️</div>
+        <h3>Easy Returns</h3>
+        <p>30-day hassle-free return policy because your satisfaction is our priority.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Gallery -->
+  <section class="gallery">
+    <h2>Meet Our Shop</h2>
+    <div class="gallery-container">
+      <div class="gallery-item">
+        <img src="./image/shop/image-4.jpg" alt="Shop 1">
+        <div class="gallery-text">Inside our Funmall Branch</div>
+      </div>
+      <div class="gallery-item">
+        <img src="./image/shop/image-10.jpg" alt="Shop 2">
+        <div class="gallery-text">Our Mohanur Branch</div>
+      </div>
+      <div class="gallery-item">
+        <img src="./image/shop/image-4.jpg" alt="Shop 3">
+        <div class="gallery-text">Wide Range of Toys</div>
+      </div>
+    </div>
+  </section>
+
+    <section class="funmall-section">
+    <h2>Fun Mall</h2>
+    <p>
+      Welcome to our Fun Mall — a joyful world designed especially for babies and kids!
+      From playful toys to interactive games, our mall is filled with exciting experiences
+      that bring happiness, laughter, and creativity to little ones.
+      A place where fun never ends!
+    </p>
+
+    <div class="funmall-images">
+      <img src="./image/shop/image-3.jpg" alt="Fun Mall Image">
+      <img src="./image/shop/image-6.jpg" alt="Fun Mall Image">
+      <img src="./image/shop/image-7.jpg" alt="Fun Mall Image">
+    </div>
+
+    <a href="/user/mall" class="view-more">View More →</a>
+  </section>
+
+
+  <section class="magic-section">
+    <div class="magic-card">
+      <h2>✨ Ready to Create Magic?</h2>
+      <p>Join thousands of happy families who trust us to bring smiles to their children's faces.</p>
+      <button class="magic-btn"> <a href="/user/shop"> Start Shopping </a></button>
+    </div>
+  </section><!-- footer content -->
+<footer class="footer">
+    <div class="footer-container">
+
+      <!-- Logo & About -->
+      <div class="footer-logo">
+        <img src="./logo" alt="">
+        <h2>Allwin Baby Shop</h2>
+        <span>Happy Toys, Happy Kids</span>
+        <p>Your trusted partner for quality toys that spark imagination and create joyful memories for children of all ages.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Shipping Info</a></li>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="footer-categories">
+        <h3>Categories</h3>
+        <ul>
+          <li><a href="#">Soft Toys</a></li>
+          <li><a href="#">Educational Toys</a></li>
+          <li><a href="#">Action Figures</a></li>
+          <li><a href="#">Outdoor Toys</a></li>
+          <li><a href="#">Dolls</a></li>
+          <li><a href="#">Musical Toys</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-contact">
+        <h3>Contact Us</h3>
+        <p><i class="fas fa-map-marker-alt"></i>123 Toy Street, Kids Corner, Mumbai, Maharashtra 400001</p>
+        <p><i class="fas fa-phone"></i>+91 98765 43210</p>
+        <p><i class="fas fa-envelope"></i>hello@allwinbaby.com</p>
+
+        <div class="store-hours">
+          <strong>Store Hours</strong><br>
+          Mon - Sat: 10:00 AM - 8:00 PM<br>
+          Sunday: 11:00 AM - 6:00 PM
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      © 2024 Allwin Baby Shop. All rights reserved. Made with <span>❤</span> for kids.
+    </div>
+  </footer>
+
+
+
+
+
+<script src="./js/script.js">
+
+</script>
+<!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,64 +1,64 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(to right, #dcedc8, #ffffff);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  animation: fadeIn 1s ease-in;
-}
-
-.form-container {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 40px 30px;
-  box-shadow: 0 10px 30px rgba(0, 128, 0, 0.2);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  animation: slideIn 0.8s ease;
-}
-
-h2 {
-  color: #2e7d32;
-  margin-bottom: 25px;
-  font-size: 28px;
-}
-
-form input {
-  width: 90%;
-  padding: 12px 14px;
-  margin: 12px 0;
-  border: 2px solid #a5d6a7;
-  border-radius: 10px;
-  font-size: 16px;
-  transition: 0.3s;
-}
-
-form input:focus {
-  outline: none;
-  border-color: #4caf50;
-  background-color: #f1f8e9;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 17px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: #388e3c;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom, #fff8d6, #ffeb99);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        width: 300px;
+        text-align: center;
+    }
+    h2 {
+        color: #ffb400;
+        margin-bottom: 20px;
+    }
+    .emoji {
+        font-size: 30px;
+        display: block;
+        margin-bottom: 10px;
+    }
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+    input:focus {
+        border-color: #ffb400;
+        box-shadow: 0 0 8px rgba(255,180,0,0.5);
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(to right, #ffcc00, #ffb400);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    button:hover {
+        opacity: 0.9;
+    }
+    a {
+        color: #ffb400;
+        text-decoration: none;
+    }
+    .links {
+        margin-top: 10px;
+        font-size: 14px;
+    }
 
 .switch-link {
   margin-top: 20px;
@@ -66,7 +66,7 @@ button:hover {
 }
 
 .switch-link a {
-  color: #2e7d32;
+  color: #ffb400;
   text-decoration: none;
   font-weight: bold;
 }

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ALLWIN PRODUCT</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="./css/shop.css">
+<link rel="stylesheet" href="./css/home.css">
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div class="top-nav">
+  <button><i class="fas fa-receipt"></i> Order</button>
+<button id="cartBtn">
+  <i class="fas fa-shopping-cart"></i> Cart
+  <span id="cartCount" class="cart-count"></span>
+</button>
+
+</div>
+
+<!-- Main Navbar -->
+<div class="main-nav">
+  <div class="logo-section">
+    <img src="./image/logo.jpg" alt="Logo">
+    <div class="shop-text">
+      <h5>Allwin Baby Shop</h5>
+      <small>Happy Toys Happy Kids</small>
+    </div>
+  </div>
+
+  <!-- Hamburger / Close Icon -->
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/user/home">Home</a>
+    <a href="/user/about">About</a>
+    <a href="/user/shop">Shop</a>
+    <a href="/user/mall">Fun Mall</a>
+    <a href="/user/contact">Contact</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+  <div class="container">
+    <!-- Sidebar Filters -->
+    <div class="sidebar">
+      <h3>Filters</h3>
+      <div id="filters"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <input type="text" id="search" placeholder="Search products..." class="search-bar" />
+
+      <div id="products" class="product-grid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+<script>
+
+  document.getElementById("cartBtn").addEventListener("click", () => {
+  window.location.href = "/user/cart"; // goes to your new cart page
+});
+let allProducts = [];
+let filteredProducts = [];
+let currentPage = 1;
+const perPage = 10;
+
+// Fetch products
+fetch("/api/products")
+  .then(res => res.json())
+  .then(products => {
+    allProducts = products;
+    filteredProducts = products;
+    renderFilters(products);
+    renderProducts();
+  });
+
+// Render Filters dynamically
+function renderFilters(products) {
+  const filterContainer = document.getElementById("filters");
+  const grouped = {};
+
+  products.forEach(p => {
+    (p.catalogues || []).forEach(c => {
+      const [key, value] = c.split(" - ");
+      if (!grouped[key]) grouped[key] = new Set();
+      grouped[key].add(value);
+    });
+  });
+
+  filterContainer.innerHTML = Object.keys(grouped).map(key => `
+    <div>
+      <h4>${key}</h4>
+      ${Array.from(grouped[key]).map(val => `
+        <label>
+          <input type="checkbox" value="${val}" data-key="${key}" onchange="applyFilters()" />
+          ${val}
+        </label><br>
+      `).join("")}
+    </div>
+  `).join("");
+}
+
+// Apply Filters
+function applyFilters() {
+  const selected = {};
+  document.querySelectorAll("#filters input:checked").forEach(cb => {
+    const key = cb.getAttribute("data-key");
+    if (!selected[key]) selected[key] = [];
+    selected[key].push(cb.value);
+  });
+
+  filteredProducts = allProducts.filter(p => {
+    return Object.keys(selected).every(k => {
+      return (p.catalogues || []).some(c => {
+        const [key, value] = c.split(" - ");
+        return key === k && selected[k].includes(value);
+      });
+    });
+  });
+
+  currentPage = 1;
+  renderProducts();
+}
+
+// Search by Name
+document.getElementById("search").addEventListener("input", async e => {
+  const term = e.target.value.toLowerCase();
+  filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(term));
+  currentPage = 1;
+  renderProducts();
+
+  // Send search log to server
+  if(term.trim() !== ""){
+    const userRes = await fetch("/get-user");
+    const user = await userRes.json();
+
+    await fetch("/log-search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: user.name,
+        email: user.email,
+        search: term
+      })
+    });
+  }
+});
+
+
+// Render Products with Pagination
+function renderProducts() {
+  const container = document.getElementById("products");
+  const start = (currentPage - 1) * perPage;
+  const end = start + perPage;
+  const pageProducts = filteredProducts.slice(start, end);
+
+function capitalizeWords(str) {
+  return str.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+container.innerHTML = pageProducts.map((p, idx) => {
+  const discount = p.discount || 0;
+  const finalPrice = Math.round(p.price * (1 - discount / 100));
+  const productName = capitalizeWords(p.name);
+
+  return `
+    <div class="product-card">
+      <div class="img-wrapper">
+        <img src="${p.image}" alt="${p.name}">
+        ${discount > 0 ? `<span class="discount-badge">${discount}% OFF</span>` : ""}
+      </div>
+      <div class="tags">
+        ${(p.catalogues || []).map(c => `<span class="tag">${c}</span>`).join(" ")}
+      </div>
+      <h4 class="product-name">${productName}</h4>
+      <p class="price">
+        <span class="final-price">₹${finalPrice}</span>
+        <span class="old-price">₹${p.price}</span>
+      </p>
+      <button class="cart-btn" data-idx="${idx}">ADD TO CART</button>
+    </div>
+  `;
+}).join("");
+
+document.querySelectorAll(".cart-btn").forEach((btn, idx) => {
+  btn.addEventListener("click", () => addToCart(pageProducts[idx]));
+});
+
+
+  renderPagination();
+}
+
+function getCart(){ return JSON.parse(localStorage.getItem("cart") || "[]"); }
+function saveCart(c){ localStorage.setItem("cart", JSON.stringify(c)); }
+
+
+// add to cart number count
+
+async function updateCartCount() {
+  try {
+    const userRes = await fetch("/get-user");
+    const user = await userRes.json();
+
+    const res = await fetch(`/api/cart/count?user=${encodeURIComponent(user.email)}`);
+    const data = await res.json();
+
+    const cartCount = document.getElementById("cartCount");
+    if (data.count > 0) {
+      cartCount.textContent = data.count;
+      cartCount.style.display = "inline-block";
+    } else {
+      cartCount.style.display = "none";
+    }
+  } catch (err) {
+    console.error("Error fetching cart count:", err);
+  }
+}
+
+// add to cart content
+// On page load
+document.addEventListener("DOMContentLoaded", () => {
+  updateCartCount();
+});
+
+// After adding to cart
+// ...existing code...
+async function addToCart(item) {
+  const userRes = await fetch("/get-user");
+  const user = await userRes.json();
+
+  const res = await fetch("/api/cart", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: user.email,
+      productId: item._id,
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      discount:item.discount,
+      qty: 1
+    })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+
+  // 👉 refresh cart count
+  updateCartCount();
+}
+
+//page redirect for add to cart
+
+document.getElementById("cartBtn").addEventListener("click", () => {
+  window.location.href = "/user/cart"; // goes to your new cart page
+});
+
+
+function renderPagination() {
+  const totalPages = Math.ceil(filteredProducts.length / perPage);
+  const container = document.getElementById("pagination");
+  container.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    container.innerHTML += `<button onclick="goToPage(${i})" ${i === currentPage ? "disabled" : ""}>${i}</button>`;
+  }
+}
+
+function goToPage(page) {
+  currentPage = page;
+  renderProducts();
+}
+</script>
+
+
+
+
+</body>
+</html>

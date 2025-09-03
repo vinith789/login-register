@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review Order</title>
+  <link rel="stylesheet" href="./css/cart.css">
+</head>
+<body>
+  <h2 class="cart-heading">Review Your Order 🧾</h2>
+
+  <table id="orderTable">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody id="orderBody"></tbody>
+  </table>
+
+  <div id="orderSummary">
+    <span id="totalQty">Total Quantity: 0</span>
+    <span id="totalPrice">Total Price: $0.00</span>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <script>
+  async function loadOrder() {
+    const userRes = await fetch("http://localhost:3000/get-user");
+    const user = await userRes.json();
+    const userId = user.email;
+
+    const res = await fetch(`http://localhost:3000/api/cart/user/${userId}`);
+    const items = await res.json();
+
+    const orderBody = document.getElementById("orderBody");
+    orderBody.innerHTML = "";
+
+    let totalQty = 0;
+    let totalPrice = 0;
+
+    items.forEach(item => {
+      const discount = item.discount || 0;
+      const finalPrice = item.price - (item.price * discount / 100);
+      const subtotal = finalPrice * item.qty;
+
+      totalQty += item.qty;
+      totalPrice += subtotal;
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><img src="../..${item.image}" width="80"></td>
+        <td>${item.name}</td>
+        <td>$${finalPrice.toFixed(2)}</td>
+        <td>${item.qty}</td>
+        <td>$${subtotal.toFixed(2)}</td>
+      `;
+      orderBody.appendChild(row);
+    });
+
+    document.getElementById("totalQty").textContent = "Total Quantity: " + totalQty;
+    document.getElementById("totalPrice").textContent = "Total Price: $" + totalPrice.toFixed(2);
+
+// Save order summary to localStorage with correct keys for order model
+// Save order summary to localStorage with correct keys for order model
+const mappedItems = items.map(item => {
+  const discount = item.discount || 0;
+  const finalPrice = item.price - (item.price * discount / 100);
+  return {
+    productName: item.name,
+    productImage: item.image,
+    price: finalPrice, // important
+    qty: item.qty
+  };
+});
+
+localStorage.setItem("orderItems", JSON.stringify(mappedItems));
+localStorage.setItem("orderTotal", totalPrice);
+
+  }
+
+  document.getElementById("nextBtn").onclick = function() {
+    window.location.href = "/user/address";
+  };
+
+  loadOrder();
+  </script>
+</body>
+</html>

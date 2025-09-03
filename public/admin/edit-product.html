@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/edit-production.css">
+  <link rel="stylesheet" href="./css/navbar.css">
+  <link rel="stylesheet" href="./css/add-product.css">
   <title>Edit Product</title>
 
 </head>
 <body>
-  <nav>
-  <h2>Admin Panel</h2>
-  <ul>
+  <nav class="navbar">
+  <h2 class="logo">Admin Panel</h2>
+  <label for="menu-checkbox" class="menu-toggle">&#9776;</label>
+  <ul class="nav-links">
     <li><a href="/admin/add-product">Add Product</a></li>
+    <li><a href="/admin/add-catalogues">Add-Catalogues</a></li>
     <li><a href="/admin/view-product">List Products</a></li>
     <li><a href="/admin/order-product">Order Product</a></li>
     <li><a href="/admin/update-order">Update Order</a></li>
@@ -20,50 +22,111 @@
   </ul>
 </nav>
 
-  <h2>Edit Product</h2>
-  <form id="editForm" enctype="multipart/form-data" method="POST">
-    <input type="hidden" name="productId" id="productId">
-    <label>Name</label>
-    <input type="text" name="name" id="name" required>
+  <div class="container">
+    <h2>Edit Product</h2>
+          <form id="editForm" enctype="multipart/form-data" method="POST">
+            <input type="hidden" name="productId" id="productId">
 
-    <label>Price</label>
-    <input type="number" name="price" id="price" required>
+            <!-- Name -->
+            <div>
+              <label for="name">Name</label>
+              <input type="text" name="name" id="name" required>
+            </div>
 
-    <label>Discount</label>
-    <input type="number" name="discount" id="discount">
+            <!-- Price -->
+            <div >
+              <label for="price">Price</label>
+              <input type="number" name="price" id="price" required>
+            </div>
 
-    <label>Description</label>
-    <textarea name="description" id="description" rows="4"></textarea>
+            <!-- Discount -->
+            <div>
+              <label for="discount">Discount</label>
+              <input type="number" name="discount" id="discount">
+            </div>
 
-    <label>Current Image</label><br>
-    <img id="currentImage" src="" alt="Product Image"><br>
+            <!-- Description -->
+            <div>
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" name="description" id="description" rows="4"></textarea>
+            </div>
 
-    <label>Upload New Image (optional)</label>
-    <input type="file" name="image" id="image"  accept="image/*" onchange="previewImage(event)">
-    <img id="preview" src="" alt="Preview" style="display: none;" />
+            <!-- Current Image -->
+            <div>
+              <label>Current Image</label>
+              <img id="currentImage" src="" alt="Product Image" style="max-width:150px;">
+            </div>
 
-    <br>
-    <button type="submit">Update Product</button>
-  </form>
+            <!-- Upload New Image -->
+            <div>
+              <label for="image" >Upload New Image (optional)</label>
+              <input type="file"  name="image" id="image" accept="image/*" onchange="previewImage(event)">
+              <img id="preview" src="" alt="Preview"  style="max-width:150px; display: none;">
+            </div>
 
- <script>
-  function previewImage(event) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const preview = document.getElementById("preview");
-      preview.src = reader.result;
-      preview.style.display = "block";
-    };
-    reader.readAsDataURL(event.target.files[0]);
+            <!-- Catalogues -->
+            <div>
+              <label>Catalogues</label>
+              <div id="catalogueContainer" ></div>
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="generateModelSelector()">+ Add Catalogue</button>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">Update Product</button>
+            </div>
+          </form>
+  </div>
+
+<script>
+  let cataloguesData = [];
+
+  // Fetch catalogues
+  async function fetchCatalogues() {
+    const res = await fetch("/api/catalogues");
+    cataloguesData = await res.json();
+  }
+
+  // Generate a catalogue-model dropdown
+  function generateModelSelector(value = "") {
+    const container = document.getElementById("catalogueContainer");
+
+    let select = document.createElement("select");
+    select.name = "catalogues[]";
+    select.className = "form-select mb-2";
+    select.required = true;
+
+    // Build options: catalogue → model
+    cataloguesData.forEach(catalogue => {
+      catalogue.models.forEach(model => {
+        let option = document.createElement("option");
+        option.value = `${catalogue.name} - ${model}`;
+        option.textContent = `${catalogue.name} → ${model}`;
+
+        // pre-select if matches value
+        if (value && option.value === value) {
+          option.selected = true;
+        }
+
+        select.appendChild(option);
+      });
+    });
+
+    container.appendChild(select);
   }
 
   const urlParams = new URLSearchParams(window.location.search);
   const form = document.getElementById('editForm');
   const productId = urlParams.get('id');
 
-  fetch(`/api/products/${productId}`)
-    .then(res => res.json())
-    .then(data => {
+  // Load product + catalogues
+  async function loadProduct() {
+    try {
+      if (cataloguesData.length === 0) await fetchCatalogues();
+
+      const res = await fetch(`/api/products/${productId}`);
+      const data = await res.json();
+
       document.getElementById('productId').value = data._id;
       document.getElementById('name').value = data.name;
       document.getElementById('price').value = data.price;
@@ -71,14 +134,38 @@
       document.getElementById('description').value = data.description;
       document.getElementById('currentImage').src = data.image;
 
-      // ✅ set form action here AFTER data is available
+      // ✅ Populate catalogue selectors
+      const container = document.getElementById("catalogueContainer");
+      container.innerHTML = "";
+
+      if (data.catalogues && data.catalogues.length) {
+        data.catalogues.forEach(c => generateModelSelector(c));
+      } else {
+        generateModelSelector();
+      }
+
+      // ✅ Set form action
       form.action = `/admin/edit-product/${data._id}`;
-    })
-    .catch(err => {
+
+    } catch (err) {
       console.error("Error fetching product:", err);
       alert("Failed to load product details.");
-    });
+    }
+  }
+
+  loadProduct();
 </script>
+
+<script>
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navLinks = document.querySelector(".nav-links");
+
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+</script>
+
+
 
 </body>
 </html>

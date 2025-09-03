@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Cart</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/cart.css">
+  <link rel="stylesheet" href="./css/home.css">
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div class="top-nav">
+  <button><i class="fas fa-receipt"></i> Order</button>
+  <button><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+</div>
+
+<!-- Main Navbar -->
+<div class="main-nav">
+  <div class="logo-section">
+    <img src="./image/logo.jpg" alt="Logo">
+    <div class="shop-text">
+      <h5>Allwin Baby Shop</h5>
+      <small>Happy Toys Happy Kids</small>
+    </div>
+  </div>
+
+  <!-- Hamburger / Close Icon -->
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/user/home">Home</a>
+    <a href="/user/about">About</a>
+    <a href="/user/shop">Shop</a>
+    <a href="/user/mall">Fun Mall</a>
+    <a href="/user/contact">Contact</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<h2 class="cart-heading">Your Shopping Cart 🛒</h2>
+  <table id="cartTable">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Discount</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="cartBody"></tbody>
+  </table>
+
+  <div id="emptyMessage" class="empty" style="display:none;">
+    Your cart is empty 😢 <br>
+    <a href="/user/shop" style="color:#2e7d32;text-decoration:none;font-weight:bold;">Shop Now</a>
+  </div>
+  <!-- Add this below your table in cart.html -->
+<div id="cartSummary" style="display:none;">
+  <span id="productCount" >Products: 0</span>
+  <span id="totalQty">Total Quantity: 0</span>
+  <span id="totalPrice">Total Price: $0.00</span>
+  <button id="orderBtn">Order</button>
+</div>
+
+<script>
+async function loadCart() {
+  try {
+    // Get logged-in user
+    const userRes = await fetch("http://localhost:3000/get-user");
+    const user = await userRes.json();
+    const userId = user.email;
+
+    // Fetch cart items
+    const res = await fetch(`http://localhost:3000/api/cart/user/${userId}`);
+    const items = await res.json();
+
+    const cartBody = document.getElementById("cartBody");
+    const emptyMessage = document.getElementById("emptyMessage");
+
+    cartBody.innerHTML = "";
+
+    let totalQty = 0;
+    let totalPrice = 0;
+
+    if (items.length === 0) {
+      document.getElementById("cartTable").style.display = "none";
+      emptyMessage.style.display = "block";
+      document.getElementById("cartSummary").style.display = "none";
+      return;
+    } else {
+      document.getElementById("cartTable").style.display = "table";
+      emptyMessage.style.display = "none";
+    }
+
+    items.forEach(item => {
+      const discount = item.discount || 0;
+      const finalPrice = item.price - (item.price * discount / 100);
+      const subtotal = finalPrice * item.qty;
+
+      totalQty += item.qty;
+      totalPrice += subtotal;
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><img src="../..${item.image}" alt="Product"></td>
+        <td>${item.name}</td>
+        <td>$${item.price.toFixed(2)}</td>
+        <td>${discount}%</td>
+        <td>
+          <button class="qty-btn" onclick="updateQty('${item._id}', -1, ${item.price}, ${discount})">-</button>
+          <span id="qty-${item._id}">${item.qty}</span>
+          <button class="qty-btn" onclick="updateQty('${item._id}', 1, ${item.price}, ${discount})">+</button>
+        </td>
+        <td id="subtotal-${item._id}">$${subtotal.toFixed(2)}</td>
+        <td>
+          <button class="qty-btn" style="background:red;color:white;" onclick="deleteItem('${item._id}')">Delete</button>
+        </td>
+      `;
+      cartBody.appendChild(row);
+    });
+
+    // Show summary if items exist
+    const cartSummary = document.getElementById("cartSummary");
+    cartSummary.style.display = "block";
+    document.getElementById("totalQty").textContent = "Total Quantity: " + totalQty;
+    document.getElementById("totalPrice").textContent = "Total Price: $" + totalPrice.toFixed(2);
+    document.getElementById("productCount").textContent = "Products: " + items.length;
+
+  } catch (err) {
+    console.error("Error loading cart:", err);
+  }
+}
+
+async function deleteItem(itemId) {
+  if (!confirm("Are you sure you want to remove this item?")) return;
+
+  const res = await fetch(`http://localhost:3000/api/cart/${itemId}`, {
+    method: "DELETE"
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    alert(data.message);
+    loadCart(); // reload cart
+  } else {
+    alert("Error: " + data.message);
+  }
+}
+
+// Update quantity function
+async function updateQty(itemId, change, price, discount) {
+  const qtySpan = document.getElementById(`qty-${itemId}`);
+  let qty = parseInt(qtySpan.textContent) + change;
+
+  if (qty < 1) qty = 1; // prevent going below 1
+  qtySpan.textContent = qty;
+
+  // Recalculate subtotal with discount
+  const finalPrice = price - (price * discount / 100);
+  const subtotal = qty * finalPrice;
+  document.getElementById(`subtotal-${itemId}`).textContent = `$${subtotal.toFixed(2)}`;
+
+  // Send update to backend
+await fetch(`http://localhost:3000/api/cart/update-qty/${itemId}`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ qty })
+});
+
+  // Reload totals and summary
+  loadCart();
+
+}
+
+// Order button handler
+// Order button handler
+document.getElementById("orderBtn").onclick = function() {
+  window.location.href = "/user/order";
+};
+
+
+
+loadCart();
+</script>
+<script src="./js/script.js"></script>
+<!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+</body>
+</html>

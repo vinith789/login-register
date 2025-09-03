@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
   secret: "otp-secret",
@@ -26,11 +28,16 @@ mongoose.connect(process.env.MONGO_URI)
 const authRoutes = require("./routes/auth");
 const resetRoutes = require("./routes/reset");
 const adminRoutes = require("./routes/admin");
+const searchLogger = require("./routes/search");
+const cartRoutes = require("./routes/cart");
+const orderRoutes = require("./routes/order");
 
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes); 
 app.use("/", adminRoutes);
 app.use("/", authRoutes);
 app.use("/", resetRoutes);
-
+app.use("/", searchLogger);
 
 // Start server
 app.listen(PORT, () => {
