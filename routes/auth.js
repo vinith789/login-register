@@ -132,14 +132,12 @@ router.get("/user/home", (req, res) => {
 });
 
 //About page
-
 router.get("/user/about", (req, res) => {
   if (!req.session.user) {
     return res.redirect("/login");
   }
   res.sendFile(path.join(__dirname, "../public/user/html/about.html"));
 });
-
 
 // Shop page
 router.get("/user/shop", (req, res) => {
