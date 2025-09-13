@@ -1,64 +1,75 @@
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(to bottom, #fff8d6, #ffeb99);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-    .card {
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        width: 300px;
-        text-align: center;
-    }
-    h2 {
-        color: #ffb400;
-        margin-bottom: 20px;
-    }
-    .emoji {
-        font-size: 30px;
-        display: block;
-        margin-bottom: 10px;
-    }
-    input {
-        width: 90%;
-        padding: 10px;
-        margin: 8px 0;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        outline: none;
-        transition: all 0.3s ease;
-    }
-    input:focus {
-        border-color: #ffb400;
-        box-shadow: 0 0 8px rgba(255,180,0,0.5);
-    }
-    button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        background: linear-gradient(to right, #ffcc00, #ffb400);
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    button:hover {
-        opacity: 0.9;
-    }
-    a {
-        color: #ffb400;
-        text-decoration: none;
-    }
-    .links {
-        margin-top: 10px;
-        font-size: 14px;
-    }
+body {
+  margin: 0;
+  height: 100vh;
+  background: #fff0f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 300px;
+    text-align: center;
+    animation: fadeIn 0.8s ease, slideIn 0.8s ease;
+}
+
+h2 {
+    color: #ff1493; /* Heading in deep pink */
+    margin-bottom: 20px;
+}
+
+.emoji {
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: #ff69b4; /* Focus border */
+    box-shadow: 0 0 8px rgba(255,105,180,0.5); /* Glow */
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(to right, #ff69b4, #ff1493); /* Pink button */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: opacity 0.3s ease;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+a {
+    color: #ff1493; /* Links deep pink */
+    text-decoration: none;
+}
+
+.links {
+    margin-top: 10px;
+    font-size: 14px;
+}
 
 .switch-link {
   margin-top: 20px;
@@ -66,7 +77,7 @@
 }
 
 .switch-link a {
-  color: #ffb400;
+  color: #ff69b4; /* Hot pink link */
   text-decoration: none;
   font-weight: bold;
 }
@@ -75,6 +86,7 @@
   text-decoration: underline;
 }
 
+/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -89,43 +101,4 @@
     transform: translateY(0px);
     opacity: 1;
   }
-}
-
-
-.welcome-container {
-  max-width: 500px;
-  margin: 100px auto;
-  padding: 40px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.welcome-container h2 {
-  color: #4a148c;
-  font-size: 28px;
-  margin-bottom: 15px;
-}
-
-.welcome-container p {
-  font-size: 18px;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.welcome-container a {
-  display: inline-block;
-  padding: 10px 25px;
-  background-color: #4a148c;
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.welcome-container a:hover {
-  background-color: #6a1b9a;
 }
