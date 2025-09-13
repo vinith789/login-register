@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 
 const Product = require("../models/Product");
-const Catalogue = require("../models/Catalogue");
+const Catalogue = require("../models/catalogue");
 
 const router = express.Router();
 
