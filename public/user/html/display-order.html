@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Allwin Baby Shop Order</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/navbar.css">
+  <link rel="stylesheet" href="./css/order.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+<div class="top-nav">
+  <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
+  <button id="cartBtn">
+    <i class="fas fa-shopping-cart"></i> Cart
+    <span id="cartCount" class="cart-count"></span>
+  </button>
+</div>
+
+<!-- Main Navbar -->
+<div class="main-nav">
+  <div class="logo-section">
+    <img src="./image/logo.jpg" alt="Logo">
+    <div class="shop-text">
+      <h5>Allwin Baby Shop</h5>
+      <small>Happy Toys Happy Kids</small>
+    </div>
+  </div>
+
+  <!-- Hamburger / Close Icon -->
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/user/home">Home</a>
+    <a href="/user/about">About</a>
+    <a href="/user/shop">Shop</a>
+    <a href="/user/mall">Fun Mall</a>
+    <a href="/user/contact">Contact</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+<h2 id="order-heading">My Orders</h2>
+<div id="ordersContainer"></div>
+
+<script>
+async function loadUserOrders() {
+  try {
+    const res = await fetch("/api/order/my-orders");
+    if (!res.ok) throw new Error("Please login first");
+
+    const orders = await res.json();
+    const container = document.getElementById("ordersContainer");
+    container.innerHTML = "";
+
+    orders.forEach(order => {
+      const productsHTML = order.products.map(p => `
+        <tr>
+          <td><img src="../..${p.image}" alt="Product" width="60"></td>
+          <td>${p.productId}</td>
+          <td>${p.name}</td>
+          <td>${p.selectedColor || "Default Color"}</td>
+          <td>${p.qty}</td>
+          <td>$${p.subtotal}</td>
+        </tr>
+      `).join("");
+
+      const orderDiv = document.createElement("div");
+      orderDiv.classList.add("order-card"); // use CSS styling
+      orderDiv.innerHTML = `
+        <h3 class="order-id">Order ID: ${order._id}</h3>
+        <p class="animated-status">
+          Status: <b class="status">${order.status}</b> |
+          ${
+            order.status === "Delivered" ? `Delivered On:<b class="delivery">${new Date(order.deliveredAt).toLocaleDateString()}</b>` :`Delivery Estimate: <b class="delivery">${order.deliveryEstimate} </b>`
+            }
+        </p>
+        <p>Total Qty: ${order.totalQty} | Total Price: $${order.totalPrice}</p>
+        <h4>Products:</h4>
+        <div class="table-container">
+          <table id="orderTable">
+            <tr>
+              <th>Image</th>
+              <th>Product ID</th>
+              <th>Name</th>
+              <th>Color</th>
+              <th>Qty</th>
+              <th>Subtotal</th>
+            </tr>
+            ${productsHTML}
+          </table>
+        </div>
+        <h4 id="addressHeading">Delivery Address:</h4>
+        <p>
+          ${order.address.fullname}<br>
+          ${order.address.address}, ${order.address.building}<br>
+          ${order.address.city}, ${order.address.state} - ${order.address.pincode}<br>
+          Mobile: ${order.address.mobile}
+        </p>
+      `;
+      container.appendChild(orderDiv);
+
+      // Animate status/delivery
+      const statusEl = orderDiv.querySelector(".status");
+      const deliveryEl = orderDiv.querySelector(".delivery");
+      statusEl.classList.add("fadeIn");
+      deliveryEl.classList.add("fadeInDelay");
+    });
+  } catch (err) {
+    console.error(err);
+    document.getElementById("ordersContainer").innerHTML = "<p>Please login to view your orders.</p>";
+  }
+}
+
+loadUserOrders();
+
+
+</script>
+
+
+<script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
+
+</body>
+</html>

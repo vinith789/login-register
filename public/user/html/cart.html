@@ -6,16 +6,18 @@
   <title>User Cart</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="./css/cart.css">
-  <link rel="stylesheet" href="./css/home.css">
+  <link rel="stylesheet" href="./css/navbar.css">
 </head>
 <body>
 
 <!-- Top Navbar -->
 <div class="top-nav">
-  <button><i class="fas fa-receipt"></i> Order</button>
-  <button><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+  <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
+  <button id="cartBtn">
+    <i class="fas fa-shopping-cart"></i> Cart
+    <span id="cartCount" class="cart-count"></span>
+  </button>
 </div>
-
 <!-- Main Navbar -->
 <div class="main-nav">
   <div class="logo-section">
@@ -49,6 +51,7 @@
         <th>Name</th>
         <th>Price</th>
         <th>Discount</th>
+        <th>Color</th>
         <th>Quantity</th>
         <th>Subtotal</th>
         <th>Action</th>
@@ -100,32 +103,44 @@ async function loadCart() {
     }
 
     items.forEach(item => {
-      const discount = item.discount || 0;
-      const finalPrice = item.price - (item.price * discount / 100);
-      const subtotal = finalPrice * item.qty;
+  const discount = item.discount || 0;
+  const finalPrice = item.price - (item.price * discount / 100);
+  const subtotal = finalPrice * item.qty;
 
-      totalQty += item.qty;
-      totalPrice += subtotal;
+  totalQty += item.qty;
+  totalPrice += subtotal;
 
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><img src="../..${item.image}" alt="Product"></td>
-        <td>${item.name}</td>
-        <td>$${item.price.toFixed(2)}</td>
-        <td>${discount}%</td>
-        <td>
-          <button class="qty-btn" onclick="updateQty('${item._id}', -1, ${item.price}, ${discount})">-</button>
-          <span id="qty-${item._id}">${item.qty}</span>
-          <button class="qty-btn" onclick="updateQty('${item._id}', 1, ${item.price}, ${discount})">+</button>
-        </td>
-        <td id="subtotal-${item._id}">$${subtotal.toFixed(2)}</td>
-        <td>
-          <button class="qty-btn" style="background:red;color:white;" onclick="deleteItem('${item._id}')">Delete</button>
-        </td>
-      `;
-      cartBody.appendChild(row);
-    });
+  // ✅ Handle colors
+  let colorOptions = "";
+  if (item.availableColors && item.availableColors.length > 0) {
+    colorOptions = `
+      <select id="color-${item._id}" class="product-color" onchange="updateColor('${item._id}', this.value)">
+        ${item.availableColors.map(c => `<option value="${c}" ${item.selectedColor === c ? "selected" : ""}>${c}</option>`).join("")}
+      </select>
+    `;
+  } else {
+    colorOptions = `<span>Default Color</span>`;
+  }
 
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><img src="../..${item.image}" class="cart-product-image" alt="Product"></td>
+    <td>${item.name}</td>
+    <td>$${item.price.toFixed(2)}</td>
+    <td>${discount}%</td>
+    <td>${colorOptions}</td>
+    <td>
+      <button class="qty-btn" onclick="updateQty('${item._id}', -1, ${item.price}, ${discount})">-</button>
+      <span id="qty-${item._id}">${item.qty}</span>
+      <button class="qty-btn" onclick="updateQty('${item._id}', 1, ${item.price}, ${discount})">+</button>
+    </td>
+    <td id="subtotal-${item._id}">$${subtotal.toFixed(2)}</td>
+    <td>
+      <button class="qty-btn" style="background:red;color:white;" onclick="deleteItem('${item._id}')">Delete</button>
+    </td>
+  `;
+  cartBody.appendChild(row);
+});
     // Show summary if items exist
     const cartSummary = document.getElementById("cartSummary");
     cartSummary.style.display = "block";
@@ -185,11 +200,26 @@ document.getElementById("orderBtn").onclick = function() {
   window.location.href = "/user/order";
 };
 
+// Update selected color function
+async function updateColor(itemId, color) {
+  try {
+    await fetch(`http://localhost:3000/api/cart/update-color/${itemId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ selectedColor: color })
+    });
+  } catch (err) {
+    console.error("Error updating color:", err);
+  }
+}
+
+
 
 
 loadCart();
 </script>
 <script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
 <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 </body>

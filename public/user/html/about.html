@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Allwin Baby Shop HOME</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="./css/home.css">
+<link rel="stylesheet" href="./css/navbar.css">
 <link rel="stylesheet" href="./css/about.css">
 <link rel="stylesheet" href="./css/footer.css">
 </head>
@@ -15,8 +13,11 @@
 
 <!-- Top Navbar -->
 <div class="top-nav">
-  <button><i class="fas fa-receipt"></i> Order</button>
-  <button><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+  <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
+  <button id="cartBtn">
+    <i class="fas fa-shopping-cart"></i> Cart
+    <span id="cartCount" class="cart-count"></span>
+  </button>
 </div>
 
 <!-- Main Navbar -->
@@ -101,35 +102,73 @@
 
     <div class="values">
       <div class="value-box">
-        <div class="icon-circle">🚚</div>
-        <h3>Fast & Free Shipping</h3>
-        <p>Free shipping on orders above ₹999 with lightning-fast delivery across India.</p>
+        <div class="icon-circle">
+             <i class="fas fa-shipping-fast"></i>
+        </div>
+        <h3>Fast Shipping</h3>
+        <p>Get your orders delivered quickly and securely, right to your doorstep.</p>
       </div>
       <div class="value-box">
-        <div class="icon-circle">🛡️</div>
+        <div class="icon-circle">
+              <i class="fas fa-shield-alt"></i>
+
+        </div>
         <h3>Safety Guaranteed</h3>
         <p>All toys are tested for safety and made from non-toxic, child-safe materials.</p>
       </div>
       <div class="value-box">
-        <div class="icon-circle">🎁</div>
+        <div class="icon-circle">
+              <i class="fas fa-gift"></i>
+        </div>
         <h3>Beautiful Packaging</h3>
         <p>Every order comes with complimentary gift wrapping perfect for any occasion.</p>
       </div>
       <div class="value-box">
-        <div class="icon-circle">⭐</div>
+        <div class="icon-circle">
+        <i class="fas fa-globe"></i>
+        </div>
         <h3>Premium Quality</h3>
         <p>Curated selection of toys from trusted brands worldwide with quality assurance.</p>
       </div>
       <div class="value-box">
-        <div class="icon-circle">📞</div>
+        <div class="icon-circle">
+          <div class="feature-icon">
+        <i class="fas fa-headset"></i>
+      </div>
+        </div>
         <h3>24/7 Support</h3>
         <p>Friendly customer support team ready to help you with any questions or concerns.</p>
       </div>
       <div class="value-box">
-        <div class="icon-circle">↩️</div>
-        <h3>Easy Returns</h3>
-        <p>30-day hassle-free return policy because your satisfaction is our priority.</p>
-      </div>
+  <div class="icon-circle">
+    <i class="fas fa-hand-holding-heart"></i>
+  </div>
+  <h3>Care & Love</h3>
+  <p>Every product is chosen with love to make your child’s moments special.</p>
+</div>
+
+<div class="value-box">
+  <div class="icon-circle">
+    <i class="fas fa-smile"></i>
+  </div>
+  <h3>Customer Satisfaction</h3>
+  <p>We go the extra mile to ensure every purchase leaves you smiling.</p>
+</div>
+<div class="value-box">
+  <div class="icon-circle">
+    <i class="fas fa-star"></i>
+  </div>
+  <h3>Trusted by Parents</h3>
+  <p>Loved by thousands of families for safe and quality toys.</p>
+</div>
+<div class="value-box">
+  <div class="icon-circle">
+    <i class="fas fa-lock"></i>
+  </div>
+  <h3>Secure Payments</h3>
+  <p>Shop with confidence using our safe and encrypted payment options.</p>
+</div>
+
     </div>
   </section>
 
@@ -178,7 +217,9 @@
       <p>Join thousands of happy families who trust us to bring smiles to their children's faces.</p>
       <button class="magic-btn"> <a href="/user/shop"> Start Shopping </a></button>
     </div>
-  </section><!-- footer content -->
+  </section>
+
+  <!-- footer content -->
 <footer class="footer">
     <div class="footer-container">
 
@@ -248,9 +289,8 @@
 
 
 
-<script src="./js/script.js">
-
-</script>
+<script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
 <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 

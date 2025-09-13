@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalogue List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/navbar.css">
+  <style>
+
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; vertical-align: middle; }
+    th { background: #6c63ff; color: #fff; }
+    button { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-size: 12px; }
+    .edit-btn { background: #43a047; color: white; }
+    .delete-btn { background: #e53935; color: white; }
+    .model-btn { background: #f9a825; color: white; font-size: 10px; margin-left: 5px; }
+    span.model-name { margin-right: 5px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+  <h2 class="logo">Admin Panel</h2>
+  <label for="menu-checkbox" class="menu-toggle">&#9776;</label>
+  <ul class="nav-links">
+    <li><a href="/admin/add-product">Add Product</a></li>
+    <li><a href="/admin/add-catalogues">Add-Catalogues</a></li>
+    <li><a href="/admin/view-product">List Products</a></li>
+    <li><a href="/admin/edit-catalogues">List Catalogues</a></li>
+    <li><a href="/admin/orders">Order Product</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+</nav>
+
+<h2>Catalogue List</h2>
+<table id="catalogueTable">
+  <thead>
+    <tr>
+      <th>Catalogue Name</th>
+      <th>Models</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Filled dynamically -->
+  </tbody>
+</table>
+
+<script>
+  async function fetchCatalogues() {
+    const res = await fetch("/api/catalogues");
+    const catalogues = await res.json();
+    const tbody = document.querySelector("#catalogueTable tbody");
+    tbody.innerHTML = "";
+
+    catalogues.forEach(cat => {
+      const tr = document.createElement("tr");
+
+      // Models column HTML with edit/delete for each model
+      const modelsHTML = cat.models.map(model => `
+        <span class="model-name" data-model="${model}">${model}</span>
+        <button class="model-edit-btn model-btn" data-catalogue="${cat.name}" data-model="${model}">Edit</button>
+        <button class="model-delete-btn model-btn" data-catalogue="${cat.name}" data-model="${model}">Delete</button>
+      `).join(" ");
+
+      tr.innerHTML = `
+        <td>${cat.name}</td>
+        <td>${modelsHTML}</td>
+        <td>
+          <button class="edit-btn" data-id="${cat._id}">Edit Catalogue</button>
+          <button class="delete-btn" data-id="${cat._id}">Delete Catalogue</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+    // Catalogue-level delete
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const tr = btn.closest("tr");
+        const catalogueName = tr.children[0].textContent;
+        if (confirm(`Delete catalogue "${catalogueName}" and all models?`)) {
+          await fetch("/admin/remove-catalogue-model", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ catalogueName })
+          });
+          fetchCatalogues();
+        }
+      });
+    });
+
+    // Catalogue-level edit
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const tr = btn.closest("tr");
+        const oldName = tr.children[0].textContent;
+        const newName = prompt("Edit Catalogue Name:", oldName);
+        if (!newName) return;
+        await fetch("/admin/edit-catalogue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ oldName, newName })
+        });
+        fetchCatalogues();
+      });
+    });
+
+    // Model-level edit
+    document.querySelectorAll(".model-edit-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const oldModel = btn.getAttribute("data-model");
+        const catalogueName = btn.getAttribute("data-catalogue");
+        const newModel = prompt(`Edit model name "${oldModel}"`, oldModel);
+        if (!newModel) return;
+        await fetch("/admin/edit-catalogue-model", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ catalogueName, oldModel, newModel })
+        });
+        fetchCatalogues();
+      });
+    });
+
+    // Model-level delete
+    document.querySelectorAll(".model-delete-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const modelName = btn.getAttribute("data-model");
+        const catalogueName = btn.getAttribute("data-catalogue");
+        if (confirm(`Delete model "${modelName}" from catalogue "${catalogueName}"?`)) {
+          await fetch("/admin/remove-catalogue-model", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ catalogueName, modelName })
+          });
+          fetchCatalogues();
+        }
+      });
+    });
+  }
+
+  // Initial load
+  fetchCatalogues();
+</script>
+
+<script>
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navLinks = document.querySelector(".nav-links");
+
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+</script>
+</body>
+</html>

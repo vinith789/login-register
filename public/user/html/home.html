@@ -5,15 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Allwin Baby Shop HOME</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<link rel="stylesheet" href="./css/style.css">
 <link rel="stylesheet" href="./css/home.css">
+<link rel="stylesheet" href="./css/navbar.css">
 </head>
 <body>
 
 <!-- Top Navbar -->
 <div class="top-nav">
-  <button><i class="fas fa-receipt"></i> Order</button>
-  <button><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+  <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
+  <button id="cartBtn">
+    <i class="fas fa-shopping-cart"></i> Cart
+    <span id="cartCount" class="cart-count"></span>
+  </button>
 </div>
 
 <!-- Main Navbar -->
@@ -41,63 +44,14 @@
   </div>
 </div>
 
-<section>
-  <div class="slider">
-  <div class="slides">
-    <!-- Will clone first and last in JS -->
-    <div class="slide">
-      <img src="./image/car.jpeg" alt="Car Toys">
-      <div class="slide-content">
-        <h2>Car Toys</h2>
-        <p>Explore our amazing collection of toy cars for kids of all ages!</p>
-        <button>Shop Cars</button>
-      </div>
-    </div>
-    <div class="slide">
-      <img src="./image/baby.jpeg" alt="Baby Products">
-      <div class="slide-content">
-        <h2>Baby Products</h2>
-        <p>Soft, safe and adorable toys for your little ones.</p>
-        <button>Shop Baby</button>
-      </div>
-    </div>
-    <div class="slide">
-      <img src="./image/fun-mall.jpeg" alt="Fun Malls">
-      <div class="slide-content">
-        <h2>Fun Malls</h2>
-        <p>Bring the amusement park home with our fun playsets!</p>
-        <button>Shop Fun</button>
-      </div>
-    </div>
-    <div class="slide">
-      <img src="./image/doll.jpeg" alt="Barbie Toys">
-      <div class="slide-content">
-        <h2>Barbie Toys</h2>
-        <p>Discover the latest Barbie dolls and accessories.</p>
-        <button>Shop Barbie</button>
-      </div>
-    </div>
-    <div class="slide">
-      <img src="./image/gift.jpeg" alt="Wedding Gifts">
-      <div class="slide-content">
-        <h2>Wedding Gifts</h2>
-        <p>Perfect gifts for weddings and special occasions.</p>
-        <button>Shop Gifts</button>
-      </div>
-    </div>
-  </div>
+<!-- image slider -->
 
-  <button class="prev">&#10094;</button>
-  <button class="next">&#10095;</button>
-
-  <div class="dots"></div>
-</div>
+<section class="slider" id="slider">
+  <div class="dots" id="dots"></div>
 </section>
 
 <!--prolist -->
  <section class="features-section">
-
-
     <div class="feature-box">
   <div class="feature-icon">
     <i class="fas fa-shipping-fast"></i>
@@ -105,7 +59,6 @@
   <h4>Fast Delivery</h4>
   <p>Quick & reliable service</p>
 </div>
-
 
     <div class="feature-box">
       <div class="feature-icon">
@@ -131,8 +84,81 @@
       <p>Always here to help</p>
     </div>
   </section>
+  <!-- about us  -->
+  <section class="about-section">
+    <h1>About Us</h1>
+    <p>Welcome to our Baby & Toy Shop! We offer a wide range of safe, high-quality toys and essentials for babies and toddlers. Our mission is to bring joy, comfort, and learning to your little ones, ensuring every product is carefully selected for both fun and safety.</p>
+    <a href="#" class="read-more-btn">Read More</a>
+  </section>
+    <!-- shop by theme  -->
+    <section class="shop-by-theme">
+    <h1 class="title">Shop by Theme</h1>
+    <div class="grid">
+      <!-- Row 1 -->
+      <div class="card technic">
+        <div class="info">
+
+          <h2>Teddy</h2>
+        </div>
+        <img src="./image/theme/barbiegirltheme.png" alt="Technic Bike" class="product">
+      </div>
+
+      <div class="card jurassic">
+        <div class="info">
+          <h2>Avengers</h2>
+        </div>
+        <img src="./image/theme/spidytheme.png" alt="Jurassic Dino" class="product">
+      </div>
+
+      <div class="card creator">
+        <div class="info">
+          <h2>Barbie</h2>
+        </div>
+        <img src="./image/theme/barbiegirltheme.png" alt="Creator Panda" class="product">
+      </div>
+
+      <div class="card harrypotter">
+        <div class="info">
+          <h2>Gifts</h2>
+        </div>
+        <img src="./image/theme/giftstheme.png" alt="Harry Potter Bus" class="product">
+      </div>
+
+      <!-- Row 2 -->
+      <div class="card technic">
+        <div class="info">
+          <h2>Toys</h2>
+        </div>
+        <img src="./image/theme/normaltoytheme.png" alt="Technic Bike" class="product">
+      </div>
+
+      <div class="card jurassic">
+        <div class="info">
+          <h2>Electrical toys</h2>
+        </div>
+        <img src="./image/theme/diycartheme.png" alt="Jurassic Dino" class="product">
+      </div>
+
+      <div class="card creator">
+        <div class="info">
+          <h2>Dolls</h2>
+        </div>
+        <img src="./image/theme/dino.png" alt="Creator Panda" class="product">
+      </div>
+
+      <div class="card harrypotter">
+        <div class="info">
+          <h2>For babies</h2>
+        </div>
+        <img src="./image/theme/babytheme.png" alt="Harry Potter Bus" class="product">
+      </div>
+    </div>
+  </section>
 
 <script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
+<script src="./js/slider.js"></script>
+
 <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 

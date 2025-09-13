@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ALLWIN PRODUCT</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="./css/shop.css">
-<link rel="stylesheet" href="./css/home.css">
+<link rel="stylesheet" href="./css/navbar.css">
 <link rel="stylesheet" href="./css/mall.css">
 <link rel="stylesheet" href="./css/footer.css">
 </head>
@@ -15,7 +13,7 @@
 
 <!-- Top Navbar -->
   <div class="top-nav">
-    <button><i class="fas fa-receipt"></i> Order</button>
+    <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
     <button id="cartBtn">
       <i class="fas fa-shopping-cart"></i> Cart
       <span id="cartCount" class="cart-count"></span>
@@ -54,23 +52,46 @@
   </section>
 
 <!-- About Section -->
+<!-- About Section -->
 <section class="about-section">
   <h2>About <span>Fun Mall</span></h2>
   <div class="about">
     <img src="./image/shop/image-10.jpg" alt="Fun Mall">
+
     <div class="about-text">
-       Welcome to <strong>Fun Mall</strong>, the ultimate destination for families and children!
-      A vibrant world filled with joy, laughter, shopping, dining, and endless entertainment.
-      From kids’ play zones to exciting food courts and thrilling rides, Fun Mall is designed
-      to bring smiles to every face.
-      Whether you’re here for fashion, fun, or flavors, our mall offers an unforgettable
-      experience for all age groups.
-      Discover a lively environment where shopping meets celebration and every visit becomes
-      a memory worth cherishing.
-      Fun Mall isn’t just a place—it’s a lifestyle hub where excitement never ends!
+      <!-- ⭐ Highlighted Therkadai Section FIRST -->
+      <div class="highlight-box">
+        <h3>✨ Therkadai</h3>
+        <p>
+          <strong>Therkadai</strong> is our unique concept where fun meets shopping!
+          Here, kids and families can <b>play games, enjoy activities</b>, and at the same time
+          <b>shop for exciting products</b>.
+        </p>
+        <p>
+          It’s just like our shop inside Fun Mall—bringing joy, play, and shopping together
+          to create an unforgettable experience!
+        </p>
+      </div>
+
+      <!-- 🔽 Normal About Content -->
+      <p>
+        Welcome to <strong>Fun Mall</strong>, the ultimate destination for families and children!
+        A vibrant world filled with joy, laughter, shopping, dining, and endless entertainment.
+      </p>
+      <p>
+        From kids’ play zones to exciting food courts and thrilling rides, Fun Mall is designed
+        to bring smiles to every face. Whether you’re here for fashion, fun, or flavors,
+        our mall offers an unforgettable experience for all age groups.
+      </p>
+      <p>
+        Discover a lively environment where shopping meets celebration and every visit becomes
+        a memory worth cherishing. Fun Mall isn’t just a place—it’s a lifestyle hub where
+        excitement never ends!
+      </p>
     </div>
   </div>
 </section>
+
 
 
   <!-- Gallery -->
@@ -207,6 +228,7 @@
   </footer>
 
 
-
+<script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
 </body>
 </html>
