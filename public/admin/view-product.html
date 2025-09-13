@@ -16,8 +16,8 @@
     <li><a href="/admin/add-product">Add Product</a></li>
     <li><a href="/admin/add-catalogues">Add-Catalogues</a></li>
     <li><a href="/admin/view-product">List Products</a></li>
-    <li><a href="/admin/order-product">Order Product</a></li>
-    <li><a href="/admin/update-order">Update Order</a></li>
+    <li><a href="/admin/edit-catalogues">List Catalogues</a></li>
+    <li><a href="/admin/orders">Order Product</a></li>
     <li><a href="/logout">Logout</a></li>
   </ul>
 </nav>
@@ -46,7 +46,8 @@
                   <h5>${p.name || "Unnamed Product"}</h5>
                   <p class="product-price"><strong>Price:</strong> ₹${p.price || 0}</p>
                   <p class="product-price"><strong>Discount:</strong> ${p.discount || 0}%</p>
-                  <p><strong>description: </strong>${p.description || ""}</p>
+                  <p><strong>You Tube Link: </strong>${p.description || "No You Tube Link"}</p>
+                  <p><strong>Description About the Product: </strong>${p.about || "No description for this product"}</p>
                   <h4>Catalogues:</h4>
                   <div>
                     ${(() => {
@@ -63,6 +64,11 @@
                       `).join("");
                     })()}
                   </div>
+                   <p><strong> Colors:</strong>
+                ${(p.colors && p.colors.length > 0)
+                  ? p.colors.join(", ")
+                  : "Default  Product Color"}
+              </p>
                 <div class="card-actions">
                   <a class="btn" href="/admin/edit-product.html?id=${p._id}">Edit</a>
                   <a class="btn" href="/admin/delete-product/${p._id}" onclick="return confirm('Are you sure?')">Delete</a>

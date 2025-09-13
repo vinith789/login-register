@@ -6,7 +6,7 @@ const Product = require("../models/Product");
 // Add to cart
 router.post("/", async (req, res) => {
   try {
-    const { userId, productId, name, image, price,discount, qty } = req.body;
+    const { userId, productId, name, image, price, colors , discount, qty } = req.body;
 
     // Check if item already exists in cart for this user
     let cartItem = await Cart.findOne({ userId, productId });
@@ -23,8 +23,11 @@ router.post("/", async (req, res) => {
       image,
       price,
       discount: discount || 0,
-      qty: qty || 1
+      qty: qty || 1,
+      availableColors: colors || [],
+      selectedColor: colors && colors.length > 0 ? colors[0] : "Default"  // ✅ set default
     });
+
     await cartItem.save();
     res.json({ message: "Added to cart!" });
   } catch (err) {
@@ -115,6 +118,22 @@ router.delete("/:cartId", async (req, res) => {
     res.status(500).json({ message: "Error deleting cart item" });
   }
 });
+
+// Update selected color
+router.post("/update-color/:id", async (req, res) => {
+  try {
+    const { selectedColor } = req.body;
+    const updated = await Cart.findByIdAndUpdate(
+      req.params.id,
+      { selectedColor },
+      { new: true }
+    );
+    res.json({ message: "Color updated", item: updated });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating color" });
+  }
+});
+
 
 
 module.exports = router;

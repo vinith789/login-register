@@ -4,9 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Allwin Baby Shop HOME</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="./css/home.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="./css/navbar.css">
 <link rel="stylesheet" href="./css/contact.css">
 <link rel="stylesheet" href="./css/footer.css">
 </head>
@@ -14,8 +13,11 @@
 
 <!-- Top Navbar -->
 <div class="top-nav">
-  <button><i class="fas fa-receipt"></i> Order</button>
-  <button><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+  <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
+  <button id="cartBtn">
+    <i class="fas fa-shopping-cart"></i> Cart
+    <span id="cartCount" class="cart-count"></span>
+  </button>
 </div>
 
 <!-- Main Navbar -->
@@ -223,9 +225,8 @@
   </footer>
 
 
-<script src="./js/script.js">
-
-</script>
+<script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
 <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 

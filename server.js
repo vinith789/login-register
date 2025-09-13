@@ -32,12 +32,14 @@ const searchLogger = require("./routes/search");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 
+app.use("/api/order", orderRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/orders", orderRoutes);
 app.use("/", adminRoutes);
 app.use("/", authRoutes);
 app.use("/", resetRoutes);
 app.use("/", searchLogger);
+app.use("/uploads", express.static("uploads"));
+
 
 // Start server
 app.listen(PORT, () => {

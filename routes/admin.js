@@ -8,6 +8,7 @@ const Catalogue = require("../models/Catalogue");
 
 const router = express.Router();
 
+
 // Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -25,19 +26,46 @@ const upload = multer({ storage });
 
 // Add Product Page
 router.get("/admin/add-product", (req, res) => {
+    if (!req.session.user || req.session.user.email !== "admin123@gmail.com") {
+    return res.redirect("/login");
+  }
   res.sendFile(path.join(__dirname, "../public/admin/add-product.html"));
 });
 
 // Serve addcatalogues.html
 router.get("/admin/add-catalogues", (req, res) => {
+    if (!req.session.user || req.session.user.email !== "admin123@gmail.com") {
+    return res.redirect("/login");
+  }
   res.sendFile(path.join(__dirname, "../public/admin/addcatalogue.html"));
+});
+router.get("/admin/edit-catalogues", (req, res) => {
+    if (!req.session.user || req.session.user.email !== "admin123@gmail.com") {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/admin/catalogues-list.html"));
 });
 
 // Add Product
 router.post("/admin/add-product", upload.single("image"), async (req, res) => {
   try {
-    const { name, price, discount, description } = req.body;
-    const catalogues = req.body["catalogues[]"] || req.body.catalogues; // fallback
+    const { name, price, discount, description, about } = req.body;
+
+    // Handle catalogues
+    let catalogues = req.body["catalogues[]"] || req.body.catalogues;
+    if (!Array.isArray(catalogues)) {
+      catalogues = catalogues ? [catalogues] : [];
+    }
+    catalogues = catalogues.map(c => c.trim());
+
+    // Handle colors
+    let colors = req.body["colors[]"] || req.body.colors;
+    if (!Array.isArray(colors)) {
+      colors = colors ? [colors] : [];
+    }
+    colors = colors.map(c => c.trim());
+
+    // Handle image
     const image = req.file ? `/uploads/${req.file.filename}` : "";
 
     const newProduct = new Product({
@@ -46,7 +74,9 @@ router.post("/admin/add-product", upload.single("image"), async (req, res) => {
       price,
       discount,
       description,
-      catalogues, // ✅ array of "Catalogue - Model"
+      about,
+      catalogues,
+      colors,   // <-- new field
     });
 
     await newProduct.save();
@@ -76,6 +106,9 @@ router.get("/api/products", async (req, res) => {
 
 // View Product Page
 router.get("/admin/view-product", (req, res) => {
+    if (!req.session.user || req.session.user.email !== "admin123@gmail.com") {
+    return res.redirect("/login");
+  }
   res.sendFile(path.join(__dirname, "../public/admin/view-product.html"));
 });
 
@@ -93,7 +126,9 @@ router.get("/admin/edit-product/:id", async (req, res) => {
 // Update Product
 router.post("/admin/edit-product/:id", upload.single("image"), async (req, res) => {
   try {
-    const { name, price, discount, description, catalogues } = req.body;
+    const { name, price, discount, description, catalogues,about } = req.body;
+    const colors = req.body["colors[]"] || req.body.colors || [];
+
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).send("Product not found");
 
@@ -104,14 +139,33 @@ router.post("/admin/edit-product/:id", upload.single("image"), async (req, res) 
       if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
     }
 
+    // Update product fields
     product.name = name;
     product.price = price;
     product.discount = discount;
     product.description = description;
+    product.about = about;
     product.catalogues = catalogues;
+    product.colors = Array.isArray(colors) ? colors.filter(c => c.trim() !== "") : [colors];
     product.image = imagePath;
 
     await product.save();
+
+    // 🔥 Sync changes to Cart items
+    const Cart = require("../models/Cart"); // import Cart model here
+
+    await Cart.updateMany(
+      { productId: product._id },
+      {
+        $set: {
+          name: product.name,
+          price: product.price,
+          discount: product.discount,
+          image: product.image,
+          availableColors: product.colors
+        }
+      }
+    );
 
     res.send(`
       <script>
@@ -124,6 +178,7 @@ router.post("/admin/edit-product/:id", upload.single("image"), async (req, res) 
     res.status(500).send("Error updating product");
   }
 });
+
 
 // Get single product JSON
 router.get("/api/products/:id", async (req, res) => {
@@ -201,6 +256,110 @@ router.post("/admin/add-catalogues", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error saving catalogue");
+  }
+});
+
+// Remove a model from a catalogue
+// Remove a model OR a whole catalogue and update products
+router.post("/admin/remove-catalogue-model", async (req, res) => {
+  const { catalogueName, modelName } = req.body;
+
+  try {
+    // 1. Find the catalogue
+    const catalogue = await Catalogue.findOne({ name: catalogueName });
+    if (!catalogue) return res.status(404).json({ error: "Catalogue not found" });
+
+    if (modelName) {
+      // -------------------------------
+      // Case 1: Remove only one model
+      // -------------------------------
+      catalogue.models = catalogue.models.filter(m => m !== modelName);
+      await catalogue.save();
+
+      const key = `${catalogueName} - ${modelName}`;
+      await Product.updateMany(
+        { catalogues: key },
+        { $pull: { catalogues: key } }
+      );
+
+      return res.json({ success: true, message: `Model '${modelName}' removed from catalogue and products updated` });
+    } else {
+      // -------------------------------
+      // Case 2: Remove the whole catalogue
+      // -------------------------------
+      await Catalogue.deleteOne({ name: catalogueName });
+
+      // build all possible "Catalogue - Model" keys
+      const keys = catalogue.models.map(m => `${catalogueName} - ${m}`);
+
+      await Product.updateMany(
+        { catalogues: { $in: keys } },
+        { $pull: { catalogues: { $in: keys } } }
+      );
+
+      return res.json({ success: true, message: `Catalogue '${catalogueName}' and all its models removed from products` });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to remove model/catalogue" });
+  }
+});
+
+// Edit catalogue name
+router.post("/admin/edit-catalogue", async (req, res) => {
+  const { oldName, newName } = req.body;
+
+  try {
+    const catalogue = await Catalogue.findOne({ name: oldName });
+    if (!catalogue) return res.status(404).send("Catalogue not found");
+
+    catalogue.name = newName;
+    await catalogue.save();
+
+    // Update all products with old catalogue
+    const keys = catalogue.models.map(m => `${oldName} - ${m}`);
+    const newKeys = catalogue.models.map(m => `${newName} - ${m}`);
+
+    for (let i = 0; i < keys.length; i++) {
+      await Product.updateMany(
+        { catalogues: keys[i] },
+        { $set: { "catalogues.$": newKeys[i] } }
+      );
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to edit catalogue" });
+  }
+});
+
+// Edit a model name inside a catalogue and update products
+router.post("/admin/edit-catalogue-model", async (req, res) => {
+  const { catalogueName, oldModel, newModel } = req.body;
+
+  try {
+    const catalogue = await Catalogue.findOne({ name: catalogueName });
+    if (!catalogue) return res.status(404).json({ error: "Catalogue not found" });
+
+    // Replace model in catalogue
+    const modelIndex = catalogue.models.indexOf(oldModel);
+    if (modelIndex === -1) return res.status(404).json({ error: "Model not found" });
+    catalogue.models[modelIndex] = newModel;
+    await catalogue.save();
+
+    // Update product catalogues
+    const oldKey = `${catalogueName} - ${oldModel}`;
+    const newKey = `${catalogueName} - ${newModel}`;
+    await Product.updateMany(
+      { catalogues: oldKey },
+      { $set: { "catalogues.$": newKey } }
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to edit model" });
   }
 });
 

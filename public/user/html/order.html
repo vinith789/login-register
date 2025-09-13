@@ -3,41 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Review Order</title>
-  <link rel="stylesheet" href="./css/cart.css">
+  <title>Order Summary</title>
+  <link rel="stylesheet" href="./css/order.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/navbar.css">
+
 </head>
 <body>
-  <h2 class="cart-heading">Review Your Order 🧾</h2>
 
-  <table id="orderTable">
+  <!-- Top Navbar -->
+<div class="top-nav">
+  <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
+  <button id="cartBtn">
+    <i class="fas fa-shopping-cart"></i> Cart
+    <span id="cartCount" class="cart-count"></span>
+  </button>
+</div>
+
+<!-- Main Navbar -->
+<div class="main-nav">
+  <div class="logo-section">
+    <img src="./image/logo.jpg" alt="Logo">
+    <div class="shop-text">
+      <h5>Allwin Baby Shop</h5>
+      <small>Happy Toys Happy Kids</small>
+    </div>
+  </div>
+
+  <!-- Hamburger / Close Icon -->
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/user/home">Home</a>
+    <a href="/user/about">About</a>
+    <a href="/user/shop">Shop</a>
+    <a href="/user/mall">Fun Mall</a>
+    <a href="/user/contact">Contact</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<h2 class="order-heading" id="order-heading" style="display:none;">Order Summary 🧾</h2>
+
+<!-- Product Summary Table -->
+<div class="table-container">
+  <table id="orderTable" style="display:none;">
     <thead>
       <tr>
         <th>Image</th>
         <th>Name</th>
         <th>Price</th>
+        <th>Discount</th>
+        <th>Color</th>
         <th>Quantity</th>
         <th>Subtotal</th>
       </tr>
     </thead>
     <tbody id="orderBody"></tbody>
   </table>
+</div>
 
-  <div id="orderSummary">
-    <span id="totalQty">Total Quantity: 0</span>
-    <span id="totalPrice">Total Price: $0.00</span>
-    <button id="nextBtn">Next</button>
-  </div>
+<!-- Totals -->
+<div id="orderSummary" style="display:none;">
+  <span id="productCount">Products: 0</span> |
+  <span id="totalQty">Total Quantity: 0</span> |
+  <span id="totalPrice">Total Price: $0.00</span>
+</div>
 
-  <script>
-  async function loadOrder() {
-    const userRes = await fetch("http://localhost:3000/get-user");
+<!-- Delivery Address Form -->
+<h3 id="addressHeading" style="display:none;">Delivery Address</h3>
+<form id="deliveryForm" style="display:none;">
+  <input type="text" name="fullname" placeholder="Full Name" required><br>
+  <input type="email" name="email" placeholder="Email" required><br>
+  <input type="tel" name="mobile" placeholder="Mobile Number" required><br>
+  <textarea name="address" placeholder="Address" required></textarea><br>
+  <input type="text" name="building" placeholder="Building / Flat No." required><br>
+  <input type="text" name="city" placeholder="City" required><br>
+  <input type="text" name="state" placeholder="State" required><br>
+  <input type="text" name="pincode" placeholder="Pincode" required><br>
+
+  <button type="submit">Confirm Order</button>
+</form>
+
+<script>
+async function loadOrderSummary() {
+  try {
+    // Get logged-in user
+    const userRes = await fetch("/get-user");
     const user = await userRes.json();
     const userId = user.email;
 
-    const res = await fetch(`http://localhost:3000/api/cart/user/${userId}`);
+    // Fetch cart items
+    const res = await fetch(`/api/cart/user/${userId}`);
     const items = await res.json();
+if (!items || items.length === 0) {
+  document.body.innerHTML = ""; // clear page content
+  setTimeout(() => {
+    alert("Add a product for order");
+    window.location.href = "/user/shop";
+  }, 0);
+  return;
+}
+    document.getElementById("order-heading").style.display = "block";
+    document.getElementById("orderTable").style.display = "table";
+    document.getElementById("orderSummary").style.display = "block";
+    document.getElementById("deliveryForm").style.display = "block";
+    document.getElementById("addressHeading").style.display = "block";
+
 
     const orderBody = document.getElementById("orderBody");
+    const orderSummary = document.getElementById("orderSummary");
     orderBody.innerHTML = "";
 
     let totalQty = 0;
@@ -51,43 +128,76 @@
       totalQty += item.qty;
       totalPrice += subtotal;
 
+      const color = item.selectedColor && item.selectedColor.trim() !== ""
+        ? item.selectedColor
+        : "Default Product Color";
+
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td><img src="../..${item.image}" width="80"></td>
+        <td><img src="../..${item.image}" alt="Product" width="60"></td>
         <td>${item.name}</td>
-        <td>$${finalPrice.toFixed(2)}</td>
+        <td>$${item.price.toFixed(2)}</td>
+        <td>${discount}%</td>
+        <td>${color}</td>
         <td>${item.qty}</td>
-        <td>$${subtotal.toFixed(2)}</td>
+        <td>$${Math.round(subtotal)}</td>
       `;
       orderBody.appendChild(row);
     });
 
-    document.getElementById("totalQty").textContent = "Total Quantity: " + totalQty;
-    document.getElementById("totalPrice").textContent = "Total Price: $" + totalPrice.toFixed(2);
+    if (items.length > 0) {
+      orderSummary.style.display = "block";
+      document.getElementById("productCount").textContent = "Products: " + items.length;
+      document.getElementById("totalQty").textContent = "Total Quantity: " + totalQty;
+      document.getElementById("totalPrice").textContent = "Total Price: $" + Math.round(totalPrice);
+    }
+  } catch (err) {
+    console.error("Error loading order summary:", err);
+  }
+}
 
-// Save order summary to localStorage with correct keys for order model
-// Save order summary to localStorage with correct keys for order model
-const mappedItems = items.map(item => {
-  const discount = item.discount || 0;
-  const finalPrice = item.price - (item.price * discount / 100);
-  return {
-    productName: item.name,
-    productImage: item.image,
-    price: finalPrice, // important
-    qty: item.qty
-  };
+document.getElementById("deliveryForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const address = Object.fromEntries(formData.entries());
+
+  const userRes = await fetch("/get-user");
+  const user = await userRes.json();
+  const userId = user.email;
+
+  try {
+    const res = await fetch("/api/order/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, address })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("✅ Order placed successfully!\n\n" + (data.message || ""));
+
+      // 🧹 Clear frontend order summary
+      document.getElementById("orderBody").innerHTML = "";
+      document.getElementById("orderSummary").style.display = "none";
+      e.target.reset();
+
+      // 🔄 Redirect to orders page
+      window.location.href = "/user/orders";
+    } else {
+      alert("❌ Failed to place order: " + (data.error || "Unknown error"));
+    }
+  } catch (err) {
+    alert("⚠️ Something went wrong: " + err.message);
+  }
 });
 
-localStorage.setItem("orderItems", JSON.stringify(mappedItems));
-localStorage.setItem("orderTotal", totalPrice);
+loadOrderSummary();
+</script>
 
-  }
+<script src="./js/script.js"></script>
+<script src="./js/cart-number.js"></script>
 
-  document.getElementById("nextBtn").onclick = function() {
-    window.location.href = "/user/address";
-  };
-
-  loadOrder();
-  </script>
 </body>
 </html>

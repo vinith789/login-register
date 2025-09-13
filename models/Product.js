@@ -8,6 +8,10 @@ const productSchema = new mongoose.Schema({
   about: String,
   image: String, // Image path
   catalogues: [String] ,
+  colors: {
+    type: [String],
+    default: [],   // if no colors, just store empty array
+  },
   createdAt: {
     type: Date,
     default: Date.now

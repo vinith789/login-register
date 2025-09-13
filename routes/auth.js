@@ -122,6 +122,13 @@ router.get("/admin/home", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/admin/home.html"));
 });
 
+router.get("/admin/orders", (req, res) => {
+  if (!req.session.user || req.session.user.email !== "admin123@gmail.com") {
+    return res.redirect("/login");
+  }
+  res.sendFile(path.join(__dirname, "../public/admin/order.html"));
+});
+
 
 // Home page after login
 router.get("/user/home", (req, res) => {
@@ -152,16 +159,17 @@ router.get("/user/order", (req, res) => {
   if (!req.session.user) {
     return res.redirect("/login");
   }
-  res.sendFile(path.join(__dirname, "../public/user/html/checkout.html"));
+  res.sendFile(path.join(__dirname, "../public/user/html/order.html"));
 });
 
 // order page
-router.get("/user/address", (req, res) => {
+router.get("/user/orders", (req, res) => {
   if (!req.session.user) {
     return res.redirect("/login");
   }
-  res.sendFile(path.join(__dirname, "../public/user/html/address.html"));
+  res.sendFile(path.join(__dirname, "../public/user/html/display-order.html"));
 });
+
 
 // Fun Mall page
 router.get("/user/mall", (req, res) => {

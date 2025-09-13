@@ -8,6 +8,16 @@ const cartSchema = new mongoose.Schema({
   price: Number,
   discount: { type: Number, default: 0 },
   qty: { type: Number, default: 1 },
+  // 👇 store available colors
+  availableColors: {
+    type: [String],
+    default: []
+  },
+  // 👇 store the selected color
+  selectedColor: {
+    type: String,
+    default: "Default"
+  },
   subtotal: Number
 });
 
