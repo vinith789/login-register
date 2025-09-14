@@ -92,7 +92,10 @@ body {
     background-color: #ff69b4;
     color: white;
   }
-
+  .nav-links .active{
+    background-color: #ff69b4;
+    color: white;
+  }
   /* Hamburger icon */
   .hamburger {
     display: none;
