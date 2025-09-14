@@ -8,9 +8,16 @@
   <link rel="stylesheet" href="./css/cart.css">
   <link rel="stylesheet" href="./css/navbar.css">
   <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/perloader.css">
 </head>
 <body>
 
+  <!-- perloader -->
+<div id="preloader" class="preloader">
+  <div class="spinner"></div>
+</div>
+
+<main id="main-content" style="display:none;">
 <!-- Top Navbar -->
 <div class="top-nav">
   <button id="orderbtn"><i class="fas fa-receipt"></i> Order</button>
@@ -137,7 +144,7 @@
       © 2025 Allwin Baby Shop. All rights reserved. Made with <span>❤</span> for kids.
     </div>
   </footer>
-
+</main>
 <script>
 async function loadCart() {
   try {
@@ -286,6 +293,7 @@ loadCart();
 </script>
 <script src="./js/script.js"></script>
 <script src="./js/cart-number.js"></script>
+<script src="./js/perloader.js"></script>
 <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 </body>
