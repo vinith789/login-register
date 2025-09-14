@@ -104,3 +104,40 @@ const slidesData = [
     // Start first animation
     document.querySelector(".overlay").classList.add("animate");
     resetTimer();
+
+
+     const track = document.getElementById("carousel-track");
+    const cards = track.children;
+    let currentIndexfeed = 0;
+
+    function updateCarousel() {
+      for (let i = 0; i < cards.length; i++) {
+        let offset = (i - currentIndexfeed + cards.length) % cards.length;
+
+        if (offset === 0) {
+          cards[i].style.transform = "translate(-50%, -50%) scale(1)";
+          cards[i].style.zIndex = 3;
+          cards[i].style.opacity = 1;
+        } else if (offset === 1) {
+          cards[i].style.transform = "translate(calc(-50% + 350px), -50%) scale(0.85)";
+          cards[i].style.zIndex = 2;
+          cards[i].style.opacity = 0.7;
+        } else if (offset === cards.length - 1) {
+          cards[i].style.transform = "translate(calc(-50% - 350px), -50%) scale(0.85)";
+          cards[i].style.zIndex = 2;
+          cards[i].style.opacity = 0.7;
+        } else {
+          cards[i].style.transform = "translate(-50%, -50%) scale(0.6)";
+          cards[i].style.zIndex = 1;
+          cards[i].style.opacity = 0;
+        }
+      }
+    }
+
+    function nextCard() {
+      currentIndexfeed = (currentIndexfeed + 1) % cards.length;
+      updateCarousel();
+    }
+
+    setInterval(nextCard, 4000); // slightly slower
+    updateCarousel();
