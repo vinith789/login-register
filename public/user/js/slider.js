@@ -141,3 +141,80 @@ const slidesData = [
 
     setInterval(nextCard, 4000); // slightly slower
     updateCarousel();
+
+    // Tilt effect
+document.querySelectorAll('.arrival-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * 8; // tilt intensity
+    const rotateY = ((x - centerX) / centerX) * -8;
+
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'rotateX(0) rotateY(0)';
+  });
+});
+
+    (function () {
+      const scroller = document.getElementById('scroller');
+      const viewport = document.getElementById('viewport');
+
+      let rafId = null;
+      let lastTime = null;
+      let px = 0;
+      const SPEED = 90; // px per sec
+
+      function imagesLoadedPromise(container) {
+        const imgs = Array.from(container.querySelectorAll('img'));
+        if (!imgs.length) return Promise.resolve();
+        return Promise.all(imgs.map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(res => img.addEventListener('load', res, { once: true }));
+        }));
+      }
+
+      async function init() {
+        await imagesLoadedPromise(scroller);
+
+        scroller.innerHTML += scroller.innerHTML;
+        let groupWidth = scroller.scrollWidth / 2;
+
+        function step(now) {
+          if (!lastTime) lastTime = now;
+          const dt = (now - lastTime) / 1000;
+          lastTime = now;
+
+          px += SPEED * dt;
+          if (px >= groupWidth) px -= groupWidth;
+
+          scroller.style.transform = `translateX(${-px}px)`;
+          rafId = requestAnimationFrame(step);
+        }
+
+        rafId = requestAnimationFrame(step);
+
+        viewport.addEventListener('mouseenter', () => {
+          if (rafId) { cancelAnimationFrame(rafId); rafId = null; lastTime = null; }
+        });
+        viewport.addEventListener('mouseleave', () => {
+          if (!rafId) rafId = requestAnimationFrame(step);
+        });
+
+        window.addEventListener('resize', () => {
+          groupWidth = scroller.scrollWidth / 2;
+          px = px % groupWidth;
+        });
+      }
+
+      if (document.readyState === 'complete') {
+        init();
+      } else {
+        window.addEventListener('load', init, { once: true });
+      }
+    })();
