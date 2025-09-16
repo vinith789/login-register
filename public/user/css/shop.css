@@ -29,11 +29,13 @@
   margin-top: 15px;
   font-size: 14px;
   color: #ff69b4 ;
+  text-transform: capitalize;
 }
 
 .sidebar label {
   font-size: 13px;
   color: #444;
+  text-transform: capitalize;
 }
 
 /* Main Content */
@@ -72,6 +74,7 @@
   flex-direction: column;
   padding: 12px;
   gap: 8px;
+  text-transform: capitalize;
 }
 
 /* Content area (flex-grow to push buttons down) */

@@ -26,3 +26,4 @@ window.fetch = async (...args) => {
     }
   }
 };
+
