@@ -15,12 +15,12 @@
     }
     /* Our Story Section */
     .story {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 50px 10%;
-  align-items: center;
-  gap: 40px;
-}
+      display: flex;
+      flex-wrap: wrap;
+      padding: 50px 10%;
+      align-items: center;
+      gap: 40px;
+    }
 
 .story-left {
   flex: 1;
@@ -32,11 +32,105 @@
   color: #e91e63;
 }
 
-.story-left ul {
-  list-style: "❤️ ";
-  padding-left: 20px;
-  margin-bottom: 20px;
+.tree {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 20px 0;
+   scrollbar-width: none;
 }
+
+.tree::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.tree ul {
+  padding-top: 20px;
+  position: relative;
+  padding-left: 40px;
+  list-style: none;
+  transition: all 0.5s ease;
+}
+
+.tree li {
+  margin: 0;
+  padding: 20px 5px 0 25px;
+  position: relative;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+/* vertical connectors */
+.tree ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15px;
+  border-left: 2px dashed #e91e63;
+  height: 100%;
+  transition: height 0.5s ease;
+}
+
+/* horizontal connectors */
+.tree li::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 0;
+  border-top: 2px dashed #e91e63;
+  width: 20px;
+  transition: width 0.5s ease;
+}
+
+/* remove root connectors */
+.tree > ul::before,
+.tree > ul > li::before {
+  border: none;
+}
+
+.tree span {
+  display: inline-block;
+  min-width: 200px;
+  background: #fff0f5;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #e91e63;
+  box-shadow: 0 4px 10px rgba(233, 30, 99, 0.2);
+  position: relative;
+  transition: transform 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+}
+
+/* hover effect */
+.tree span:hover {
+  transform: scale(1.05);
+  background: #e91e63;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(233, 30, 99, 0.4);
+}
+
+
+/* entry animation */
+.tree li {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.tree li:nth-child(1) { animation-delay: 0.3s; }
+.tree li:nth-child(2) { animation-delay: 0.6s; }
+.tree li:nth-child(3) { animation-delay: 0.9s; }
+.tree li:nth-child(4) { animation-delay: 1.2s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .story-left p {
   margin-bottom: 10px;
@@ -256,11 +350,9 @@
       bottom: -8px;
       transition: width 0.5s ease;
     }
-
     .funmall-section h2:hover::after {
       width: 100%;
     }
-
     /* About text */
     .funmall-section p {
       max-width: 700px;
@@ -270,7 +362,6 @@
       color: #555;
       animation: fadeUp 1s ease forwards;
     }
-
     /* Images grid */
     .funmall-images {
       display: grid;
@@ -280,14 +371,12 @@
       margin: auto;
       animation: fadeUp 1.2s ease forwards;
     }
-
     .funmall-images img {
       width: 100%;
       border-radius: 15px;
       transition: transform 0.4s ease, box-shadow 0.4s ease;
       cursor: pointer;
     }
-
     .funmall-images img:hover {
       transform: scale(1.08) rotate(-1deg);
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
@@ -347,6 +436,10 @@
         height: 300px;
         width: 400px;
       }
+      .tree span {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
       .funmall-section h2 {
         font-size: 2rem;
       }
@@ -377,8 +470,14 @@
       }
         .story {
     flex-direction: column; /* stack vertically */
+    justify-content: center;
     padding: 20px 5%;
     gap: 20px;
+  }
+  .tree span {
+    font-size: 12px;
+    padding: 5px 18px;
+  min-width: 150px;
   }
 
   .story-left h2 {

@@ -137,7 +137,7 @@ async function loadUserOrders() {
           <td>${p.name}</td>
           <td>${p.selectedColor || "Default Color"}</td>
           <td>${p.qty}</td>
-          <td>$${p.subtotal}</td>
+          <td>₹${p.subtotal}</td>
         </tr>
       `).join("");
 
@@ -151,7 +151,7 @@ async function loadUserOrders() {
             order.status === "Delivered" ? `Delivered On:<b class="delivery">${new Date(order.deliveredAt).toLocaleDateString()}</b>` :`Delivery Estimate: <b class="delivery">${order.deliveryEstimate} </b>`
             }
         </p>
-        <p>Total Qty: ${order.totalQty} | Total Price: $${order.totalPrice}</p>
+        <p>Total Qty: ${order.totalQty} | Total Price: ₹${order.totalPrice}</p>
         <h4>Products:</h4>
         <div class="table-container">
           <table id="orderTable">

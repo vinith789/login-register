@@ -46,29 +46,38 @@ const slidesData = [
     let timer;
 
     // Create slides
-    slidesData.forEach((slide, index) => {
-      const slideDiv = document.createElement("div");
-      slideDiv.classList.add("slide");
-      if (index === 0) slideDiv.classList.add("active");
-      slideDiv.style.backgroundImage = `url(${slide.img})`;
+// Create slides
+slidesData.forEach((slide, index) => {
+  const slideDiv = document.createElement("div");
+  slideDiv.classList.add("slide");
+  if (index === 0) slideDiv.classList.add("active");
+  slideDiv.style.backgroundImage = `url(${slide.img})`;
 
-      slideDiv.innerHTML = `
-        <div class="overlay">
-          <h2>${slide.title}</h2>
-          <p>${slide.text}</p>
-          <button>${slide.button}</button>
-        </div>
-      `;
+  slideDiv.innerHTML = `
+    <div class="overlay">
+      <h2>${slide.title}</h2>
+      <p>${slide.text}</p>
+      <button class="slide-btn">${slide.button}</button>
+    </div>
+  `;
 
-      slider.appendChild(slideDiv);
+  slider.appendChild(slideDiv);
 
-      // dots
-      const dot = document.createElement("div");
-      dot.classList.add("dot");
-      if (index === 0) dot.classList.add("active");
-      dot.addEventListener("click", () => showSlide(index));
-      dotsContainer.appendChild(dot);
-    });
+  // dots
+  const dot = document.createElement("div");
+  dot.classList.add("dot");
+  if (index === 0) dot.classList.add("active");
+  dot.addEventListener("click", () => showSlide(index));
+  dotsContainer.appendChild(dot);
+});
+
+// ✅ Add click redirect for all slide buttons
+document.querySelectorAll(".slide-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    window.location.href = "/user/shop";
+  });
+});
+
 
     const slides = document.querySelectorAll(".slide");
     const dots = document.querySelectorAll(".dot");

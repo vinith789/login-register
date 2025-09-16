@@ -1,11 +1,18 @@
-
-  document.getElementById("cartBtn").addEventListener("click", () => {
+document.getElementById("cartBtn").addEventListener("click", () => {
   window.location.href = "/user/cart"; // goes to your new cart page
 });
 
  document.getElementById("orderbtn").addEventListener("click", () => {
   window.location.href = "/user/orders"; // goes to your new cart page
 });
+
+const viewMoreBtn = document.getElementById("view-more");
+if (viewMoreBtn) {
+  viewMoreBtn.addEventListener("click", () => {
+    window.location.href = "/user/shop";
+  });
+}
+
 
 // add to cart number count
 async function updateCartCount() {
@@ -33,3 +40,4 @@ async function updateCartCount() {
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
 });
+

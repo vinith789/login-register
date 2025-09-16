@@ -76,7 +76,7 @@
 <div id="cartSummary" style="display:none;">
   <span id="productCount" >Products: 0</span>
   <span id="totalQty">Total Quantity: 0</span>
-  <span id="totalPrice">Total Price: $0.00</span>
+  <span id="totalPrice">Total Price: ₹0.00</span>
   <button id="orderBtn">Order</button>
 </div>
 
@@ -199,7 +199,7 @@ async function loadCart() {
   row.innerHTML = `
     <td><img src="../..${item.image}" class="cart-product-image" alt="Product"></td>
     <td>${item.name}</td>
-    <td>$${item.price.toFixed(2)}</td>
+    <td>₹${item.price.toFixed(2)}</td>
     <td>${discount}%</td>
     <td>${colorOptions}</td>
     <td>
@@ -207,7 +207,7 @@ async function loadCart() {
       <span id="qty-${item._id}">${item.qty}</span>
       <button class="qty-btn" onclick="updateQty('${item._id}', 1, ${item.price}, ${discount})">+</button>
     </td>
-    <td id="subtotal-${item._id}">$${subtotal.toFixed(2)}</td>
+    <td id="subtotal-${item._id}">₹${subtotal.toFixed(2)}</td>
     <td>
       <button class="qty-btn" style="background:red;color:white;" onclick="deleteItem('${item._id}')">Delete</button>
     </td>
@@ -218,7 +218,7 @@ async function loadCart() {
     const cartSummary = document.getElementById("cartSummary");
     cartSummary.style.display = "block";
     document.getElementById("totalQty").textContent = "Total Quantity: " + totalQty;
-    document.getElementById("totalPrice").textContent = "Total Price: $" + totalPrice.toFixed(2);
+    document.getElementById("totalPrice").textContent = "Total Price: ₹" + totalPrice.toFixed(2);
     document.getElementById("productCount").textContent = "Products: " + items.length;
 
   } catch (err) {

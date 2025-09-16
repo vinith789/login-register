@@ -32,6 +32,7 @@
   overflow-x: auto;
   /* ✅ horizontal scroll only */
   margin: 15px 0;
+  text-transform: capitalize;
 }
 
 /* Scrollbar under the table */
