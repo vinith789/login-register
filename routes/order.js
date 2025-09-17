@@ -4,6 +4,7 @@ const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const User = require("../models/User"); // to get user info
 const nodemailer = require("nodemailer");
+const ExcelJS = require("exceljs");
 
 require("dotenv").config();
 
@@ -299,5 +300,89 @@ router.post("/admin/orders/update-status/:id", async (req, res) => {
   }
 });
 
+// 📌 Download all orders in Excel
+
+router.get("/admin/orders/download", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Orders");
+
+    // Columns
+    worksheet.columns = [
+      { header: "Order ID", key: "orderId", width: 25 },
+      { header: "User ID", key: "userId", width: 30 },
+      { header: "Customer Name", key: "customerName", width: 20 },
+      { header: "Email", key: "email", width: 25 },
+      { header: "Mobile", key: "mobile", width: 15 },
+      { header: "Address", key: "address", width: 40 },
+      { header: "City", key: "city", width: 15 },
+      { header: "State", key: "state", width: 15 },
+      { header: "Pincode", key: "pincode", width: 12 },
+      { header: "Product ID", key: "productId", width: 25 },
+      { header: "Product Name", key: "productName", width: 25 },
+      { header: "Color", key: "color", width: 15 },
+      { header: "Qty", key: "qty", width: 10 },
+      { header: "Price", key: "price", width: 12 },
+      { header: "Discount %", key: "discount", width: 12 },
+      { header: "Subtotal", key: "subtotal", width: 15 },
+      { header: "Order Status", key: "status", width: 15 },
+      { header: "Total Qty", key: "totalQty", width: 12 },
+      { header: "Total Price", key: "totalPrice", width: 15 },
+      { header: "Created At", key: "createdAt", width: 20 },
+      { header: "Delivered At", key: "deliveredAt", width: 20 },
+    ];
+
+    // Rows (flatten order + products)
+    orders.forEach(order => {
+      order.products.forEach(p => {
+        worksheet.addRow({
+          orderId: order._id,
+          userId: order.userId,
+          customerName: order.address.fullname,
+          email: order.address.email,
+          mobile: order.address.mobile || "—",
+          address: order.address.address + " " + (order.address.building || ""),
+          city: order.address.city,
+          state: order.address.state,
+          pincode: order.address.pincode,
+          productId: p.productId,
+          productName: p.name,
+          color: p.selectedColor || "Default",
+          qty: p.qty,
+          price: p.price,
+          discount: p.discount || 0,
+          subtotal: p.subtotal,
+          status: order.status,
+          totalQty: order.totalQty,
+          totalPrice: order.totalPrice,
+          createdAt: new Date(order.createdAt).toLocaleString(),
+          deliveredAt: order.deliveredAt ? new Date(order.deliveredAt).toLocaleString() : "—"
+        });
+      });
+    });
+
+    // Style header row
+    worksheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+    worksheet.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF007BFF" } };
+
+    // Send file
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=orders.xlsx"
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error("Excel download error:", err);
+    res.status(500).json({ error: "Failed to download Excel" });
+  }
+});
 
 module.exports = router;
