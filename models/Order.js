@@ -31,8 +31,13 @@ const orderSchema = new mongoose.Schema({
     enum: ["Ordered", "Processing", "Shipped","Delivered"],
     default: "Ordered"
   },
+  paymentProof: {
+  type: String, // file path of uploaded payment screenshot
+  required: true
+},
    deliveredAt: { type: Date },
   createdAt: { type: Date, default: Date.now }
+
 });
 
 module.exports = mongoose.model("Order", orderSchema);

@@ -5,6 +5,8 @@ const Cart = require("../models/Cart");
 const User = require("../models/User"); // to get user info
 const nodemailer = require("nodemailer");
 const ExcelJS = require("exceljs");
+const multer = require("multer");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -23,20 +25,33 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Storage config
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/payments/"); // folder for screenshots
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 
 // Confirm order
-router.post("/confirm", async (req, res) => {
-  try {
-    const { userId, address } = req.body;
+router.post("/confirm", upload.single("paymentProof"), async (req, res) => {
+ try {
+    const { userId, fullname, email, mobile, address, building, city, state, pincode } = req.body;
 
-    // Get cart items
+    if (!req.file) return res.status(400).json({ error: "Payment screenshot required" });
+
+    // fetch cart items
     const cartItems = await Cart.find({ userId });
-    if (!cartItems.length) {
-      return res.status(400).json({ error: "Cart is empty" });
-    }
+    if (!cartItems.length) return res.status(400).json({ error: "Cart is empty" });
 
-    // Get user details
+    // fetch user
     const user = await User.findOne({ email: userId });
+    // Use the database email if frontend email is missing
+      const customerEmail = email || user?.email;
 
     // Calculate totals
     let totalQty = 0, totalPrice = 0;
@@ -60,13 +75,13 @@ router.post("/confirm", async (req, res) => {
       };
     });
 
-    // Save order + clear cart in parallel
-    const order = new Order({
+     const order = new Order({
       userId,
       products,
       totalQty,
       totalPrice: Math.round(totalPrice),
-      address
+      address: { fullname, email, mobile, address, building, city, state, pincode },
+      paymentProof: `/uploads/payments/${req.file.filename}`
     });
 
     await Promise.all([
@@ -74,8 +89,9 @@ router.post("/confirm", async (req, res) => {
       Cart.deleteMany({ userId })
     ]);
 
-    // ✅ Send fast response to frontend
     res.json({ message: "Check Your mail Box For More Information" });
+    // Send emails with attachment
+    const attachmentFile = path.join(__dirname, "..", order.paymentProof);
 
     // 🔄 Background email sending (no wait for user)
     const productList = products.map(
@@ -91,7 +107,7 @@ router.post("/confirm", async (req, res) => {
 
     const userMailOptions = {
       from: process.env.EMAIL_USER,
-      to: address.email,
+      to: customerEmail,
       subject: "🎉 Congratulations – Your Order is Confirmed!",
       html: `
         <h2>Hello ${address.fullname}, 🎉</h2>
@@ -132,7 +148,13 @@ router.post("/confirm", async (req, res) => {
         </table>
         <p><b>Total Quantity:</b> ${totalQty}</p>
         <p><b>Total Price:</b> $${Math.round(totalPrice)}</p>
-      `
+      `,
+       attachments: [
+        {
+          filename: "payment-proof.png",
+          path: attachmentFile
+        }
+      ]
     };
 
     // 🔄 Background (async, don’t wait)

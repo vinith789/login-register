@@ -70,30 +70,21 @@ document.getElementById("deliveryForm").addEventListener("submit", async (e) => 
   e.preventDefault();
 
   const formData = new FormData(e.target);
-  const address = Object.fromEntries(formData.entries());
 
   const userRes = await fetch("/get-user");
   const user = await userRes.json();
-  const userId = user.email;
+  formData.append("userId", user.email);
 
   try {
     const res = await fetch("/api/order/confirm", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, address })
+      body: formData // ✅ now sending file + data
     });
 
     const data = await res.json();
 
     if (res.ok) {
       alert("✅ Order placed successfully!\n\n" + (data.message || ""));
-
-      // 🧹 Clear frontend order summary
-      document.getElementById("orderBody").innerHTML = "";
-      document.getElementById("orderSummary").style.display = "none";
-      e.target.reset();
-
-      // 🔄 Redirect to orders page
       window.location.href = "/user/orders";
     } else {
       alert("❌ Failed to place order: " + (data.error || "Unknown error"));
@@ -102,5 +93,19 @@ document.getElementById("deliveryForm").addEventListener("submit", async (e) => 
     alert("⚠️ Something went wrong: " + err.message);
   }
 });
+
+
+ document.getElementById("paymentProof").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = document.getElementById("previewImg");
+        img.src = ev.target.result;
+        img.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
 loadOrderSummary();

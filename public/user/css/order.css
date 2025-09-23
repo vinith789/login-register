@@ -200,6 +200,20 @@
   }
 }
 
+.payment-screenshot {
+  width: 200px;
+  height: auto;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.no-payment {
+  color: red;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+
 /* ========== Responsive ========== */
 
 /* 📱 Small screens (mobile <600px) */

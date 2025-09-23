@@ -669,6 +669,7 @@ body{
       margin: 5px 0 15px;
       font-size: 16px;
       color: #888;
+      text-transform: lowercase;
     }
 
     .feedback-section .card p {

@@ -7,14 +7,13 @@ async function loadUserOrders() {
     const container = document.getElementById("ordersContainer");
     container.innerHTML = "";
 
-     if (orders.length === 0) {
-      // No orders case
+    if (orders.length === 0) {
       container.innerHTML = `
-      <div class="no-orders">
-        <p class="noorder">You don't have any orders yet. </p>
-        <p class="noorder">Start shopping to place your first order!</p>
-        <a href="/user/shop" class="shop-now-btn">Shop Now</a>
-      </div>
+        <div class="no-orders">
+          <p class="noorder">You don't have any orders yet.</p>
+          <p class="noorder">Start shopping to place your first order!</p>
+          <a href="/user/shop" class="shop-now-btn">Shop Now</a>
+        </div>
       `;
       return;
     }
@@ -31,15 +30,21 @@ async function loadUserOrders() {
         </tr>
       `).join("");
 
+      const paymentHTML = order.paymentProof
+        ? `<img src="../..${order.paymentProof}" alt="Payment Screenshot" class="payment-screenshot">`
+        : `<p class="no-payment">No Payment Screenshot Uploaded</p>`;
+
       const orderDiv = document.createElement("div");
-      orderDiv.classList.add("order-card"); // use CSS styling
+      orderDiv.classList.add("order-card");
       orderDiv.innerHTML = `
         <h3 class="order-id">Order ID: ${order._id}</h3>
         <p class="animated-status">
           Status: <b class="status">${order.status}</b> |
           ${
-            order.status === "Delivered" ? `Delivered On:<b class="delivery">${new Date(order.deliveredAt).toLocaleDateString()}</b>` :`Delivery Estimate: <b class="delivery">${order.deliveryEstimate} </b>`
-            }
+            order.status === "Delivered"
+              ? `Delivered On: <b class="delivery">${new Date(order.deliveredAt).toLocaleDateString()}</b>`
+              : `Delivery Estimate: <b class="delivery">${order.deliveryEstimate}</b>`
+          }
         </p>
         <p>Total Qty: ${order.totalQty} | Total Price: ₹${order.totalPrice}</p>
         <h4>Products:</h4>
@@ -63,6 +68,8 @@ async function loadUserOrders() {
           ${order.address.city}, ${order.address.state} - ${order.address.pincode}<br>
           Mobile: ${order.address.mobile}
         </p>
+        <h4>Payment Screenshot:</h4>
+        ${paymentHTML}
       `;
       container.appendChild(orderDiv);
 
@@ -70,7 +77,7 @@ async function loadUserOrders() {
       const statusEl = orderDiv.querySelector(".status");
       const deliveryEl = orderDiv.querySelector(".delivery");
       statusEl.classList.add("fadeIn");
-      deliveryEl.classList.add("fadeInDelay");
+      if (deliveryEl) deliveryEl.classList.add("fadeInDelay");
     });
   } catch (err) {
     console.error(err);
