@@ -10,15 +10,15 @@ async function loadUserOrders() {
      if (orders.length === 0) {
       // No orders case
       container.innerHTML = `
-        <p>You don't have any orders yet.</p>
-        <button id="shopNowBtn" class="shop-now-btn">Shop Now</button>
+      <div class="no-orders">
+        <p class="noorder">You don't have any orders yet. </p>
+        <p class="noorder">Start shopping to place your first order!</p>
+        <a href="/user/shop" class="shop-now-btn">Shop Now</a>
+      </div>
       `;
-      document.getElementById("shopNowBtn").addEventListener("click", () => {
-        window.location.href = "/shop"; // Replace with your shop page URL
-      });
       return;
     }
-    
+
     orders.forEach(order => {
       const productsHTML = order.products.map(p => `
         <tr>

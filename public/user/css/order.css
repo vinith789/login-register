@@ -171,6 +171,19 @@
   animation: blinkAnim 2.5s infinite;
 }
 
+.no-orders{
+  text-align: center;
+  font-size: 20px;
+  color: #777;
+  margin: 20px;
+}
+.shop-now-btn {
+  text-align: center;
+  text-decoration: none;
+  color: #2e7d32;
+  font-weight: bold;
+}
+
 @keyframes blinkAnim {
 
   0%,
