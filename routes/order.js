@@ -10,15 +10,19 @@ require("dotenv").config();
 
 // Nodemailer transporter
 const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
+  host: "smtp.gmail.com",
+  port: 587,         // use 587 for TLS
+  secure: false,     // false for TLS
   auth: {
-    user: process.env.BREVO_USER,
-    pass: process.env.BREVO_PASS
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // App Password if using Gmail
   },
-  tls: { rejectUnauthorized: false }
+  tls: {
+    ciphers: "SSLv3",
+    rejectUnauthorized: false
+  }
 });
+
 
 // Confirm order
 router.post("/confirm", async (req, res) => {

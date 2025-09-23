@@ -6,12 +6,15 @@ const router = express.Router();
 
 // Configure transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,         // use 587 for TLS
+  secure: false,     // false for TLS
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS, // App Password if using Gmail
   },
   tls: {
+    ciphers: "SSLv3",
     rejectUnauthorized: false
   }
 });
