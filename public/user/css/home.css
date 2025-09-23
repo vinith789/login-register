@@ -1,8 +1,8 @@
-body{
-  overflow-x: hidden;
-  text-transform: capitalize;
-}
-.slider {
+    body{
+      overflow-x: hidden;
+      text-transform: capitalize;
+    }
+    .slider {
       position: relative;
       width: 100%;
       height: 80vh;

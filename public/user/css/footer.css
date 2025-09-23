@@ -88,6 +88,10 @@
       color: #ccc;
     }
 
+    .footer-contact p:nth-of-type(3) {
+      text-transform: lowercase !important;
+    }
+
     .footer-contact i {
       margin-right: 8px;
       color: #f43f5e;
