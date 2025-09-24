@@ -1,6 +1,6 @@
     html,body{
        overflow-x: hidden;
-  max-width: 100%;
+      max-width: 100%;
     }
     body{
       text-transform: capitalize;
@@ -714,7 +714,6 @@
 .arrival .main-container {
   position: relative;
   width: 95%;
-  max-width: 1200px;
   padding: 25px;
   border-radius: 40px;
   background: #fff0f7;
@@ -909,6 +908,9 @@
         width: 80px;
         height: 80px;
         font-size: 36px;
+      }
+      .arrival .main-container{
+        width: 90%;
       }
        .arrival  .viewport { height: 250px; }
      .arrival  .arrival-card { width: 200px; height: 210px; }
