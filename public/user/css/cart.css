@@ -1,3 +1,7 @@
+    html,body{
+       overflow-x: hidden;
+      max-width: 100%;
+    }
 .cart-heading {
   text-align: center;
   margin: 20px 0;

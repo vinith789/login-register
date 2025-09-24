@@ -1,5 +1,8 @@
+    html,body{
+       overflow-x: hidden;
+  max-width: 100%;
+    }
     body{
-      overflow-x: hidden;
       text-transform: capitalize;
     }
     .slider {
